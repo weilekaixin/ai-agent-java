@@ -68,6 +68,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- Forest HTTP客户端 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-forest</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

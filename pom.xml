@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ai</groupId>
-    <artifactId>ai-agent</artifactId>
+    <artifactId>ai-agent-java</artifactId>
     <version>${revision}</version>
 
     <name>ai-agent</name>
@@ -23,7 +23,7 @@
         <hutool.version>5.8.43</hutool.version>
         <redisson.version>3.52.0</redisson.version>
         <lombok.version>1.18.44</lombok.version>
-        <forest.version>1.5.36</forest.version>
+        <forest.version>1.6.4</forest.version>
         <therapi-javadoc.version>0.15.0</therapi-javadoc.version>
         <mapstruct-plus.version>1.5.0</mapstruct-plus.version>
         <mapstruct-plus.lombok.version>0.2.0</mapstruct-plus.lombok.version>

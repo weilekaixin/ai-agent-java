@@ -3,13 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.ai</groupId>
-        <artifactId>ai-agent</artifactId>
+        <artifactId>ai-agent-java</artifactId>
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <modules>
         <module>ai-api-bom</module>
+        <module>ai-api-forest</module>
     </modules>
 
     <artifactId>ai-api</artifactId>

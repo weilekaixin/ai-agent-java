@@ -1,0 +1,19 @@
+# Forest HTTP 客户端默认配置
+# 如需修改请在 nacos 或 application.yml 写相同配置覆盖
+forest:
+  # 最大连接数
+  max-connections: 500
+  # 每个路由最大连接数
+  max-route-connections: 300
+  # 请求超时时间（毫秒）
+  timeout: 30000
+  # 连接超时时间（毫秒）
+  connect-timeout: 10000
+  # 重试次数（0 不重试）
+  retry-count: 0
+  # 是否启用日志
+  log-enabled: true
+  # 是否打印请求日志
+  log-request: false
+  # 是否打印响应状态日志
+  log-response-status: true
