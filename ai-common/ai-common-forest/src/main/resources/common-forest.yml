@@ -17,3 +17,7 @@ forest:
   log-request: false
   # 是否打印响应状态日志
   log-response-status: true
+  # JSON 转换器（使用 Jackson，支持 @JsonProperty）
+  converters:
+    json:
+      type: com.dtflys.forest.converter.json.ForestJacksonConverter

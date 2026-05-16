@@ -1,5 +1,6 @@
 package com.ai.common.forest.config;
 
+import com.dtflys.forest.springboot.annotation.ForestScan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
  */
 @Slf4j
 @AutoConfiguration
+@ForestScan("com.ai.agent")
 public class ForestConfig {
 
 }

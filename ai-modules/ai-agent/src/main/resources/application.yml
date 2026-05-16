@@ -1,41 +1,23 @@
 server:
-  port: 8080
-  servlet:
-    context-path: /
+  port: 8081
 
 spring:
   application:
-    name: ai-gateway
+    name: ai-agent
   profiles:
     active: @profiles.active@
 
-# 安全配置
-security:
-  # 不校验白名单
-  ignore:
-    whites:
-      - /api/chat/**
+agent:
+  chat:
+    timeout: 300_000
+
+forest:
+  variables:
+    agent_base_url: http://localhost:8000
 
 --- # nacos 配置
 spring:
   cloud:
-    gateway:
-      # 打印请求日志(自定义)
-      requestLog: true
-      server:
-        webflux:
-          discovery:
-            locator:
-              lowerCaseServiceId: true
-              enabled: true
-          routes:
-            # AI Agent 服务
-            - id: ai-agent
-              uri: lb://ai-agent
-              predicates:
-                - Path=/api/chat/**
-              filters:
-                - StripPrefix=1
     nacos:
       server-addr: ${NACOS_ADDR:127.0.0.1:8848}
       username: ${NACOS_USERNAME:nacos}

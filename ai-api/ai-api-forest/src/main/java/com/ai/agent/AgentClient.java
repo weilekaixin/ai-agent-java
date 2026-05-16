@@ -11,7 +11,7 @@ import com.dtflys.forest.http.ForestSSE;
 /**
  * AI Agent客户端
  *
- * @author root
+ * @author root 2026-05-16 16:04
  */
 @BaseRequest(
     baseURL = "${agent_base_url}",
