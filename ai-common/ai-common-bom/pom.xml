@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ai</groupId>
+    <artifactId>ai-common-bom</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <description>
+        ai-common-bom common依赖项
+    </description>
+
+    <properties>
+        <revision>2.6.1</revision>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 核心模块 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 缓存服务 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-redis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- web服务 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-web</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 数据库服务 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-mybatis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 序列化模块 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-json</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 配置中心 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-nacos</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Dubbo配置 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-dubbo</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+</project>

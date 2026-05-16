@@ -1,0 +1,17 @@
+# 内置配置 不允许修改 如需修改请在 nacos 上写相同配置覆盖
+mybatis-plus:
+  checkConfigLocation: false
+  configuration:
+    mapUnderscoreToCamelCase: true
+    autoMappingBehavior: FULL
+    autoMappingUnknownColumnBehavior: NONE
+    logImpl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+  global-config:
+    banner: true
+    dbConfig:
+      idType: ASSIGN_ID
+      logicDeleteValue: 1
+      logicNotDeleteValue: 0
+      insertStrategy: NOT_NULL
+      updateStrategy: NOT_NULL
+      whereStrategy: NOT_NULL
