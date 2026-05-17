@@ -50,3 +50,7 @@ script
 
 # 敏感信息
 .env
+
+# claude code
+.claude
+.playwright-cli

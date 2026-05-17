@@ -1,6 +1,7 @@
 package com.ai.modules.agent.controller;
 
 import com.ai.agent.model.ChatQuery;
+import com.ai.agent.model.ResumeQuery;
 import com.ai.modules.agent.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -28,5 +29,15 @@ public class ChatController {
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter chat(@RequestBody ChatQuery query) {
         return chatService.chat(query);
+    }
+
+    /**
+     * 恢复执行敏感操作
+     *
+     * @author root 2026-05-17 16:04
+     */
+    @PostMapping(value = "/resume", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter resume(@RequestBody ResumeQuery query) {
+        return chatService.resume(query);
     }
 }

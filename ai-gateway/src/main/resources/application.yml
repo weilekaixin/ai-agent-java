@@ -15,7 +15,9 @@ security:
   ignore:
     whites:
       - /api/chat/**
-
+# 打印请求参数
+api-decrypt:
+  enabled: true
 --- # nacos 配置
 spring:
   cloud:

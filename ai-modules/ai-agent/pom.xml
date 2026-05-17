@@ -11,7 +11,7 @@
     <artifactId>ai-agent</artifactId>
 
     <description>
-        ai-modules-agent AI Agent 服务
+        ai-agent AI Agent 服务
     </description>
 
     <dependencies>
