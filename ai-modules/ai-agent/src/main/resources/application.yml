@@ -23,10 +23,10 @@ spring:
       username: ${NACOS_USERNAME:nacos}
       password: ${NACOS_PASSWORD:nacos}
       discovery:
-        group: @nacos.discovery.group@
+        group: ${nacos.discovery.group:DEFAULT_GROUP}
         namespace: ${spring.profiles.active}
       config:
-        group: @nacos.config.group@
+        group: ${nacos.config.group:DEFAULT_GROUP}
         namespace: ${spring.profiles.active}
   config:
     import:
