@@ -38,6 +38,10 @@ spring:
                 - Path=/api/chat/**
               filters:
                 - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: aiAgentCircuitBreaker
+                    fallbackUri: forward:/fallback/ai-agent
     nacos:
       server-addr: ${NACOS_ADDR:127.0.0.1:8848}
       username: ${NACOS_USERNAME:nacos}
@@ -53,3 +57,36 @@ spring:
       - optional:file:.env[.properties]
       - optional:nacos:application-common.yml
       - optional:nacos:${spring.application.name}.yml
+
+# Resilience4j 断路器配置
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        # 滑动窗口大小
+        sliding-window-size: 10
+        # 最小调用次数（达到此次数后开始计算故障率）
+        minimum-number-of-calls: 5
+        # 故障率阈值（百分比），超过则打开断路器
+        failure-rate-threshold: 50
+        # 半开状态允许的最大调用次数
+        permitted-number-of-calls-in-half-open-state: 3
+        # 断路器打开后等待时间（秒），之后进入半开状态
+        wait-duration-in-open-state: 30s
+        # 慢调用阈值（SSE 流式响应持续时间长，设 5 分钟避免误判）
+        slow-call-duration-threshold: 300s
+        # 慢调用故障率阈值（百分比）
+        slow-call-rate-threshold: 60
+    instances:
+      aiAgentCircuitBreaker:
+        base-config: default
+  timelimiter:
+    configs:
+      default:
+        # 超时时间（SSE 流式响应设 5 分钟）
+        timeout-duration: 300s
+        # 取消运行中的 Future
+        cancel-running-future: true
+    instances:
+      aiAgentCircuitBreaker:
+        base-config: default
