@@ -7,7 +7,7 @@ spring:
   application:
     name: ai-gateway
   profiles:
-    active: @profiles.active@
+    active: ${profiles.active:dev}
 
 # 安全配置
 security:
@@ -31,7 +31,7 @@ spring:
               lowerCaseServiceId: true
               enabled: true
           routes:
-            # AI Agent 服务
+            # AI Agent 服务（多实例：8081/8082/8083 → 各自 Nacos 注册 → 网关权重轮询）
             - id: ai-agent
               uri: lb://ai-agent
               predicates:
@@ -42,6 +42,16 @@ spring:
                   args:
                     name: aiAgentCircuitBreaker
                     fallbackUri: forward:/fallback/ai-agent
+    # Nacos 权重感知负载均衡（多实例按权重分发）
+    loadbalancer:
+      nacos:
+        enabled: true
+      health-check:
+        initial-delay: 5s
+        interval: 10s
+        refetch-instances: true
+        path:
+          default: /actuator/health
     nacos:
       server-addr: ${NACOS_ADDR:127.0.0.1:8848}
       username: ${NACOS_USERNAME:nacos}

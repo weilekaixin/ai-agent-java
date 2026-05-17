@@ -65,7 +65,9 @@ public class WebCorsFilter implements WebFilter, Ordered {
             HttpHeaders headers = response.getHeaders();
             headers.add("Access-Control-Allow-Headers", ALLOWED_HEADERS);
             headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
-            headers.add("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+            // 回显请求来源 Origin 而非直接使用 *，以兼容 Allow-Credentials
+            String origin = request.getHeaders().getFirst("Origin");
+            headers.add("Access-Control-Allow-Origin", origin != null ? origin : ALLOWED_ORIGIN);
             headers.add("Access-Control-Expose-Headers", ALLOWED_EXPOSE);
             headers.add("Access-Control-Max-Age", MAX_AGE);
             headers.add("Access-Control-Allow-Credentials", "true");

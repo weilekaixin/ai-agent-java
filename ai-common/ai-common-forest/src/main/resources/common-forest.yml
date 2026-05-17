@@ -9,8 +9,10 @@ forest:
   timeout: 30000
   # 连接超时时间（毫秒）
   connect-timeout: 10000
-  # 重试次数（0 不重试）
-  retry-count: 0
+  # 重试次数（1 表示发生网络异常时重试 1 次）
+  retry-count: 1
+  # 重试间隔（毫秒）
+  retry-interval: 500
   # 是否启用日志
   log-enabled: true
   # 是否打印请求日志

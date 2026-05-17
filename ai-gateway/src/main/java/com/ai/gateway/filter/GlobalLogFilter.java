@@ -63,6 +63,19 @@ public class GlobalLogFilter implements GlobalFilter, Ordered {
         String path = WebFluxUtils.getOriginalRequestUrl(exchange);
         String url = request.getMethod().name() + " " + path;
 
+        // SSE 流式接口请求体可能很大，跳过耗时的 JSON 反序列化与脱敏
+        if (path.contains("/api/chat")) {
+            log.info("[AI]开始请求 => URL[{}]", url);
+            exchange.getAttributes().put(START_TIME, System.currentTimeMillis());
+            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                Long startTime = exchange.getAttribute(START_TIME);
+                if (startTime != null) {
+                    long executeTime = (System.currentTimeMillis() - startTime);
+                    log.info("[AI]结束请求 => URL[{}],耗时:[{}]毫秒", url, executeTime);
+                }
+            }));
+        }
+
         // 打印请求参数
         if (WebFluxUtils.isJsonRequest(exchange)) {
             if (apiDecryptProperties.getEnabled()

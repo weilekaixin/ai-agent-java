@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
@@ -57,7 +56,9 @@ public class ChatService {
     private SseEmitter stream(StreamTag tag, Supplier<ForestSSE> supplier) {
         SseEmitter emitter = new SseEmitter(agentProperties.getTimeout());
 
-        CompletableFuture.runAsync(() -> {
+        // 虚拟线程：sse.listen() 是阻塞调用，每个连接会持续占用一个线程。
+        // 虚拟线程挂起时几乎不消耗内核资源，可支撑数千并发 SSE 连接而不会耗尽平台线程池。
+        Thread.startVirtualThread(() -> {
             try {
                 ForestSSE sse = supplier.get();
                 log.info("[{}] Forest SSE 连接已建立", tag);
