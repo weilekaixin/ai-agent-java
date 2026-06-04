@@ -127,6 +127,11 @@ public interface AgentClient {
     @Get(value = "/api/sessions/{sessionId}/usage/summary")
     String getSessionUsageSummary(@Var("sessionId") String sessionId);
 
+    // ─ 管理面板 ───────────────────────────────────────────────────────────────────
+
+    @Get(value = "/api/admin/stats")
+    String getAdminStats();
+
     // ─ AutoDream ─────────────────────────────────────────────────────────────────────
 
     @Post(value = "/api/dream", contentType = ContentType.APPLICATION_JSON)
