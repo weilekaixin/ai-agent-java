@@ -13,7 +13,8 @@ agent:
 
 forest:
   variables:
-    agent_base_url: http://localhost:8000
+    # AGENT_BASE_URL 环境变量可覆盖，实现 dev/prod 切换
+    agent_base_url: ${AGENT_BASE_URL:http://localhost:8000}
     agent_api_key: ${AGENT_API_KEY:}
 
 management:

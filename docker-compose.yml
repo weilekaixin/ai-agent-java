@@ -1,0 +1,13 @@
+services:
+  ai-agent-java:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      # 指向 Python agent 服务（同局域网用服务名，跨种用 IP）
+      FOREST_VARIABLES_AGENT_BASE_URL: ${AGENT_BASE_URL:-http://localhost:8000}
+      AGENT_API_KEY: ${AGENT_API_KEY:-}
+      NACOS_ADDR: ${NACOS_ADDR:-127.0.0.1:8848}
+    env_file:
+      - .env
+    restart: unless-stopped
