@@ -5,7 +5,9 @@ import com.ai.agent.model.FeedbackCreate;
 import com.ai.agent.model.MultiAgentQuery;
 import com.ai.agent.model.PersonaCreate;
 import com.ai.agent.model.PersonaUpdate;
+import com.ai.agent.model.PinCreate;
 import com.ai.agent.model.ResumeQuery;
+import com.ai.agent.model.TagCreate;
 import com.dtflys.forest.annotation.BaseRequest;
 import com.dtflys.forest.annotation.Delete;
 import com.dtflys.forest.annotation.ForestClient;
@@ -85,6 +87,34 @@ public interface AgentClient {
 
     @Get(value = "/api/sessions/{sessionId}/feedback/stats")
     String getSessionFeedbackStats(@Var("sessionId") String sessionId);
+
+    // ─ 会话标签 ─────────────────────────────────────────────────────────────────────
+
+    @Post(value = "/api/sessions/{sessionId}/tags", contentType = ContentType.APPLICATION_JSON)
+    String addSessionTag(@Var("sessionId") String sessionId, @JSONBody TagCreate body);
+
+    @Delete(value = "/api/sessions/{sessionId}/tags/{tag}")
+    String removeSessionTag(@Var("sessionId") String sessionId, @Var("tag") String tag);
+
+    @Get(value = "/api/sessions/{sessionId}/tags")
+    String getSessionTags(@Var("sessionId") String sessionId);
+
+    @Get(value = "/api/tags")
+    String listAllTags();
+
+    @Get(value = "/api/tags/{tag}/sessions?page={page}&size={size}")
+    String getSessionsByTag(@Var("tag") String tag, @Var("page") int page, @Var("size") int size);
+
+    // ─ 消息置顶 ─────────────────────────────────────────────────────────────────────
+
+    @Post(value = "/api/messages/{messageId}/pin", contentType = ContentType.APPLICATION_JSON)
+    String pinMessage(@Var("messageId") Long messageId, @JSONBody PinCreate body);
+
+    @Delete(value = "/api/messages/{messageId}/pin")
+    String unpinMessage(@Var("messageId") Long messageId);
+
+    @Get(value = "/api/sessions/{sessionId}/pinned")
+    String getPinnedMessages(@Var("sessionId") String sessionId);
 
     // ─ AutoDream ─────────────────────────────────────────────────────────────────────
 
