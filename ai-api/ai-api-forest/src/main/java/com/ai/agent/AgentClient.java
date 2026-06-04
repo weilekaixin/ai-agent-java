@@ -1,6 +1,7 @@
 package com.ai.agent;
 
 import com.ai.agent.model.ChatQuery;
+import com.ai.agent.model.FeedbackCreate;
 import com.ai.agent.model.MultiAgentQuery;
 import com.ai.agent.model.PersonaCreate;
 import com.ai.agent.model.PersonaUpdate;
@@ -70,6 +71,20 @@ public interface AgentClient {
 
     @Delete(value = "/api/sessions/{sessionId}")
     String deleteSession(@Var("sessionId") String sessionId);
+
+    // ─ 消息反馈 ───────────────────────────────────────────────────────────────────────
+
+    @Post(value = "/api/messages/{messageId}/feedback", contentType = ContentType.APPLICATION_JSON)
+    String createFeedback(@Var("messageId") Long messageId, @JSONBody FeedbackCreate body);
+
+    @Get(value = "/api/messages/{messageId}/feedback")
+    String getMessageFeedback(@Var("messageId") Long messageId);
+
+    @Get(value = "/api/sessions/{sessionId}/feedback")
+    String getSessionFeedback(@Var("sessionId") String sessionId);
+
+    @Get(value = "/api/sessions/{sessionId}/feedback/stats")
+    String getSessionFeedbackStats(@Var("sessionId") String sessionId);
 
     // ─ AutoDream ─────────────────────────────────────────────────────────────────────
 
