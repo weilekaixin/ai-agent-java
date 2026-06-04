@@ -116,6 +116,17 @@ public interface AgentClient {
     @Get(value = "/api/sessions/{sessionId}/pinned")
     String getPinnedMessages(@Var("sessionId") String sessionId);
 
+    // ─ Token 用量 ────────────────────────────────────────────────────────────────────
+
+    @Get(value = "/api/sessions/{sessionId}/usage?page={page}&size={size}")
+    String getSessionUsage(
+            @Var("sessionId") String sessionId,
+            @Var("page") int page,
+            @Var("size") int size);
+
+    @Get(value = "/api/sessions/{sessionId}/usage/summary")
+    String getSessionUsageSummary(@Var("sessionId") String sessionId);
+
     // ─ AutoDream ─────────────────────────────────────────────────────────────────────
 
     @Post(value = "/api/dream", contentType = ContentType.APPLICATION_JSON)
