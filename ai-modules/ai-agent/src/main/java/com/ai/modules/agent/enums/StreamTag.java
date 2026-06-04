@@ -7,5 +7,6 @@ package com.ai.modules.agent.enums;
  */
 public enum StreamTag {
     CHAT,
-    RESUME
+    RESUME,
+    MULTI_AGENT
 }
