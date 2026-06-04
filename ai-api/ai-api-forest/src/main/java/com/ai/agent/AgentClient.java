@@ -56,6 +56,9 @@ public interface AgentClient {
     @Put(value = "/api/sessions/{sessionId}/title", contentType = ContentType.APPLICATION_JSON)
     String updateSessionTitle(@Var("sessionId") String sessionId, @JSONBody Map<String, String> body);
 
+    @Post(value = "/api/sessions/{sessionId}/clear", contentType = ContentType.APPLICATION_JSON)
+    String clearSession(@Var("sessionId") String sessionId);
+
     @Delete(value = "/api/sessions/{sessionId}")
     String deleteSession(@Var("sessionId") String sessionId);
 
@@ -68,6 +71,11 @@ public interface AgentClient {
 
     @Get(value = "/health")
     String getHealth();
+
+    // ─ Structured Output ───────────────────────────────────────────────────────────────
+
+    @Post(value = "/api/structured", contentType = ContentType.APPLICATION_JSON)
+    String structuredOutput(@JSONBody Map<String, Object> body);
 
     // ─ Persona 管理 ───────────────────────────────────────────────────────────────
 
