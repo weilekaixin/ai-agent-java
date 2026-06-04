@@ -14,8 +14,26 @@ agent:
 forest:
   variables:
     agent_base_url: http://localhost:8000
-    # API Key 通过环境变量 AGENT_API_KEY 注入，未配置时为空（开发环境可不设置）
     agent_api_key: ${AGENT_API_KEY:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: ai-agent
+    description: AI Agent 消息网关服务
 
 --- # nacos 配置
 spring:
