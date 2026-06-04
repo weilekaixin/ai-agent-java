@@ -3,6 +3,7 @@ package com.ai.modules.agent.controller;
 import com.ai.agent.AgentClient;
 import com.ai.agent.model.PersonaCreate;
 import com.ai.agent.model.PersonaUpdate;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class PersonaController {
 
     /** 创建新 Persona */
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> createPersona(@RequestBody PersonaCreate body) {
+    public ResponseEntity<String> createPersona(@Valid @RequestBody PersonaCreate body) {
         return ResponseEntity.ok(agentClient.createPersona(body));
     }
 

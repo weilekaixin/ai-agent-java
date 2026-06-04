@@ -3,6 +3,7 @@ package com.ai.modules.agent.controller;
 import com.ai.agent.model.ChatQuery;
 import com.ai.agent.model.ResumeQuery;
 import com.ai.modules.agent.service.ChatService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,13 +22,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
+
     /**
      * 聊天
-     *
+ *
      * @author root 2026-05-16 16:04
      */
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter chat(@RequestBody ChatQuery query) {
+    public SseEmitter chat(@Valid @RequestBody ChatQuery query) {
         return chatService.chat(query);
     }
 
@@ -37,7 +39,7 @@ public class ChatController {
      * @author root 2026-05-17 16:04
      */
     @PostMapping(value = "/resume", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter resume(@RequestBody ResumeQuery query) {
+    public SseEmitter resume(@Valid @RequestBody ResumeQuery query) {
         return chatService.resume(query);
     }
 }

@@ -1,6 +1,7 @@
 package com.ai.agent.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -18,5 +19,6 @@ public class MultiAgentQuery {
     /**
      * 用户消息
      */
+    @NotBlank(message = "message 不能为空")
     private String message;
 }

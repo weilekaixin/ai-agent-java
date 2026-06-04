@@ -2,6 +2,7 @@ package com.ai.modules.agent.controller;
 
 import com.ai.agent.model.MultiAgentQuery;
 import com.ai.modules.agent.service.ChatService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ public class MultiAgentController {
      * 多智能体协作流式对话
      */
     @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter multiAgentChat(@RequestBody MultiAgentQuery query) {
+    public SseEmitter multiAgentChat(@Valid @RequestBody MultiAgentQuery query) {
         return chatService.multiAgentChat(query);
     }
 }
