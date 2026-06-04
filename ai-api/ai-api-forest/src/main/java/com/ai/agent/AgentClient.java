@@ -16,6 +16,8 @@ import com.dtflys.forest.annotation.Var;
 import com.dtflys.forest.backend.ContentType;
 import com.dtflys.forest.http.ForestSSE;
 
+import java.util.Map;
+
 /**
  * AI Agent 客户端
  *
@@ -48,6 +50,12 @@ public interface AgentClient {
     @Get(value = "/api/sessions/{sessionId}/messages")
     String getSessionMessages(@Var("sessionId") String sessionId);
 
+    @Get(value = "/api/sessions/{sessionId}/export")
+    String exportSession(@Var("sessionId") String sessionId);
+
+    @Put(value = "/api/sessions/{sessionId}/title", contentType = ContentType.APPLICATION_JSON)
+    String updateSessionTitle(@Var("sessionId") String sessionId, @JSONBody Map<String, String> body);
+
     @Delete(value = "/api/sessions/{sessionId}")
     String deleteSession(@Var("sessionId") String sessionId);
 
@@ -55,6 +63,11 @@ public interface AgentClient {
 
     @Post(value = "/api/dream", contentType = ContentType.APPLICATION_JSON)
     String triggerDream();
+
+    // ─ Ops ─────────────────────────────────────────────────────────────────────────────
+
+    @Get(value = "/health")
+    String getHealth();
 
     // ─ Persona 管理 ───────────────────────────────────────────────────────────────
 
