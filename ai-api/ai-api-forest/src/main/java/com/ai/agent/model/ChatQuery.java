@@ -19,4 +19,9 @@ public class ChatQuery {
      * 用户消息
      */
     private String message;
+    /**
+     * 自定义 AI 角色 ID（可选，注入 system_prompt）
+     */
+    @JsonProperty("persona_id")
+    private String personaId;
 }
