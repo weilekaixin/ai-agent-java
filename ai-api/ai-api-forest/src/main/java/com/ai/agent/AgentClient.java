@@ -1,6 +1,7 @@
 package com.ai.agent;
 
 import com.ai.agent.model.ChatQuery;
+import com.ai.agent.model.MultiAgentQuery;
 import com.ai.agent.model.PersonaCreate;
 import com.ai.agent.model.PersonaUpdate;
 import com.ai.agent.model.ResumeQuery;
@@ -35,6 +36,9 @@ public interface AgentClient {
 
     @Post(value = "/api/resume", contentType = ContentType.APPLICATION_JSON)
     ForestSSE resume(@JSONBody ResumeQuery query);
+
+    @Post(value = "/api/multi-agent/chat", contentType = ContentType.APPLICATION_JSON)
+    ForestSSE multiAgentChat(@JSONBody MultiAgentQuery query);
 
     // ─ 会话管理 ───────────────────────────────────────────────────────────────
 
