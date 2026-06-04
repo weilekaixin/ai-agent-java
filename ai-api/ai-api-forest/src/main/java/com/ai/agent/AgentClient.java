@@ -19,7 +19,7 @@ import com.dtflys.forest.http.ForestSSE;
 import java.util.Map;
 
 /**
- * AI Agent 客户端
+ * AI Agent HTTP 客户端（Forest）
  *
  * @author root 2026-05-16 16:04
  */
@@ -31,7 +31,7 @@ import java.util.Map;
 @ForestClient
 public interface AgentClient {
 
-    // ─ SSE 流式接口 ───────────────────────────────────────────────────────────────
+    // ─ SSE 流式接口 ─────────────────────────────────────────────────────────────────────
 
     @Post(value = "/api/chat", contentType = ContentType.APPLICATION_JSON)
     ForestSSE chat(@JSONBody ChatQuery query);
@@ -42,10 +42,13 @@ public interface AgentClient {
     @Post(value = "/api/multi-agent/chat", contentType = ContentType.APPLICATION_JSON)
     ForestSSE multiAgentChat(@JSONBody MultiAgentQuery query);
 
-    // ─ 会话管理 ───────────────────────────────────────────────────────────────
+    // ─ 会话管理 ────────────────────────────────────────────────────────────────────
 
     @Get(value = "/api/sessions")
     String getSessions();
+
+    @Get(value = "/api/sessions/search?q={q}&page={page}&size={size}")
+    String searchMessages(@Var("q") String q, @Var("page") int page, @Var("size") int size);
 
     @Get(value = "/api/sessions/{sessionId}/messages")
     String getSessionMessages(@Var("sessionId") String sessionId);
@@ -53,8 +56,14 @@ public interface AgentClient {
     @Get(value = "/api/sessions/{sessionId}/export")
     String exportSession(@Var("sessionId") String sessionId);
 
+    @Get(value = "/api/sessions/{sessionId}/export/csv")
+    String exportSessionCsv(@Var("sessionId") String sessionId);
+
     @Put(value = "/api/sessions/{sessionId}/title", contentType = ContentType.APPLICATION_JSON)
     String updateSessionTitle(@Var("sessionId") String sessionId, @JSONBody Map<String, String> body);
+
+    @Post(value = "/api/sessions/{sessionId}/auto-title", contentType = ContentType.APPLICATION_JSON)
+    String autoTitle(@Var("sessionId") String sessionId);
 
     @Post(value = "/api/sessions/{sessionId}/clear", contentType = ContentType.APPLICATION_JSON)
     String clearSession(@Var("sessionId") String sessionId);
@@ -62,7 +71,7 @@ public interface AgentClient {
     @Delete(value = "/api/sessions/{sessionId}")
     String deleteSession(@Var("sessionId") String sessionId);
 
-    // ─ AutoDream ───────────────────────────────────────────────────────────────
+    // ─ AutoDream ─────────────────────────────────────────────────────────────────────
 
     @Post(value = "/api/dream", contentType = ContentType.APPLICATION_JSON)
     String triggerDream();
@@ -72,12 +81,12 @@ public interface AgentClient {
     @Get(value = "/health")
     String getHealth();
 
-    // ─ Structured Output ───────────────────────────────────────────────────────────────
+    // ─ Structured Output ──────────────────────────────────────────────────────────────────
 
     @Post(value = "/api/structured", contentType = ContentType.APPLICATION_JSON)
     String structuredOutput(@JSONBody Map<String, Object> body);
 
-    // ─ Persona 管理 ───────────────────────────────────────────────────────────────
+    // ─ Persona 管理 ──────────────────────────────────────────────────────────────────
 
     @Get(value = "/api/personas")
     String getPersonas();

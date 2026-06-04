@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -27,10 +28,19 @@ public class SessionController {
 
     private final AgentClient agentClient;
 
-    /** 列出所有会话（按创建时间降序） */
+    /** 列出会话（分页） */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> listSessions() {
         return ResponseEntity.ok(agentClient.getSessions());
+    }
+
+    /** 消息全文检索 */
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> searchMessages(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(agentClient.searchMessages(q, page, size));
     }
 
     /** 查询某会话的全部消息 */
@@ -39,10 +49,18 @@ public class SessionController {
         return ResponseEntity.ok(agentClient.getSessionMessages(sessionId));
     }
 
-    /** 导出会话完整记录为 JSON */
+    /** 导出会话 JSON */
     @GetMapping(value = "/{sessionId}/export", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> exportSession(@PathVariable String sessionId) {
         return ResponseEntity.ok(agentClient.exportSession(sessionId));
+    }
+
+    /** 导出会话 CSV */
+    @GetMapping(value = "/{sessionId}/export/csv", produces = "text/csv")
+    public ResponseEntity<String> exportSessionCsv(@PathVariable String sessionId) {
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"session_" + sessionId + ".csv\"")
+                .body(agentClient.exportSessionCsv(sessionId));
     }
 
     /** 更新会话标题 */
@@ -51,6 +69,12 @@ public class SessionController {
             @PathVariable String sessionId,
             @RequestBody Map<String, String> body) {
         return ResponseEntity.ok(agentClient.updateSessionTitle(sessionId, body));
+    }
+
+    /** LLM 自动生成会话标题 */
+    @PostMapping(value = "/{sessionId}/auto-title", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> autoTitle(@PathVariable String sessionId) {
+        return ResponseEntity.ok(agentClient.autoTitle(sessionId));
     }
 
     /** 清空会话消息（保留会话，开始新对话） */
