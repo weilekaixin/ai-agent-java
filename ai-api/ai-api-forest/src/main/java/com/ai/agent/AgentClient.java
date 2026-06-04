@@ -19,6 +19,7 @@ import com.dtflys.forest.http.ForestSSE;
  */
 @BaseRequest(
     baseURL = "${agent_base_url}",
+    headers = {"X-Api-Key: ${agent_api_key}"},
     interceptor = {AgentAuthInterceptor.class}
 )
 @ForestClient
@@ -32,23 +33,19 @@ public interface AgentClient {
     @Post(value = "/api/resume", contentType = ContentType.APPLICATION_JSON)
     ForestSSE resume(@JSONBody ResumeQuery query);
 
-    // ─── 会话管理接口（返回原始 JSON 字符串，网关不转换结构） ──────────────────────
+    // ─── 会话管理 ────────────────────────────────────────────────────────
 
-    /** 列出全部会话 */
     @Get(value = "/api/sessions")
     String getSessions();
 
-    /** 查询指定会话的全部消息 */
     @Get(value = "/api/sessions/{sessionId}/messages")
     String getSessionMessages(@Var("sessionId") String sessionId);
 
-    /** 删除会话及其消息 */
     @Delete(value = "/api/sessions/{sessionId}")
     String deleteSession(@Var("sessionId") String sessionId);
 
-    // ─── AutoDream 手动触发 ────────────────────────────────────────────────
+    // ─── AutoDream ──────────────────────────────────────────────────────
 
-    /** 手动触发夠间记忆整合任务 */
     @Post(value = "/api/dream", contentType = ContentType.APPLICATION_JSON)
     String triggerDream();
 }

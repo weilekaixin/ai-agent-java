@@ -14,6 +14,8 @@ agent:
 forest:
   variables:
     agent_base_url: http://localhost:8000
+    # API Key 通过环境变量 AGENT_API_KEY 注入，未配置时为空（开发环境可不设置）
+    agent_api_key: ${AGENT_API_KEY:}
 
 --- # nacos 配置
 spring:
