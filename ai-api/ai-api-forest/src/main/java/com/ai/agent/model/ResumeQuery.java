@@ -17,7 +17,13 @@ public class ResumeQuery {
     private String sessionId;
 
     /**
-     * true = 同意执行 false = 拒绝、取消
+     * 任务ID（/chat 返回的 __INTERRUPT__ 信号中携带）
+     */
+    @JsonProperty("thread_id")
+    private String threadId;
+
+    /**
+     * true = 同意执行  false = 拒绝、取消
      */
     private Boolean approved;
 }

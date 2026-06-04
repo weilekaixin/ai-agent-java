@@ -31,18 +31,14 @@ public class ChatService {
     private AgentProperties agentProperties;
 
     /**
-     * 恢复执行敏感操作
-     *
-     * @author root 2026-05-16 16:04
-     */
+     * 发起聊天
+ */
     public SseEmitter chat(ChatQuery query) {
         return this.stream(StreamTag.CHAT, () -> agentClient.chat(query));
     }
 
     /**
      * 恢复执行敏感操作
-     *
-     * @author root 2026-05-16 16:04
      */
     public SseEmitter resume(ResumeQuery query) {
         return this.stream(StreamTag.RESUME, () -> agentClient.resume(query));
@@ -50,13 +46,11 @@ public class ChatService {
 
     /**
      * 通用 SSE 流式转发：通过 Forest 调用 Python agent，将 SSE 事件转发到 SseEmitter
-     *
-     * @author root 2026-05-16 16:04
      */
     private SseEmitter stream(StreamTag tag, Supplier<ForestSSE> supplier) {
         SseEmitter emitter = new SseEmitter(agentProperties.getTimeout());
 
-        // 虚拟线程：sse.listen() 是阻塞调用，每个连接会持续占用一个线程。
+        // 虚拟线程：sse.listen() 是阻塑调用，每个连接会持续占用一个线程。
         // 虚拟线程挂起时几乎不消耗内核资源，可支撑数千并发 SSE 连接而不会耗尽平台线程池。
         Thread.startVirtualThread(() -> {
             try {
@@ -65,7 +59,6 @@ public class ChatService {
 
                 sse.setOnMessage(event -> {
                     String data = event.data();
-                    // 空 data 代表 LLM 发出的 \n token，转发为换行
                     if (ObjectUtil.isNull(data)) {
                         return;
                     }
@@ -91,10 +84,15 @@ public class ChatService {
 
                 sse.listen();
             } catch (Exception e) {
-                log.error("[{}] Forest SSE 异常", tag, e);
+                // 降级处理：Python agent 不可用时，发送友好错误提示后正常关闭流
+                log.error("[{}] Forest SSE 异常，agent 可能不可用", tag, e);
                 try {
-                    emitter.completeWithError(e);
+                    emitter.send(SseEmitter.event()
+                        .name(AgentConstant.MESSAGE)
+                        .data("服务暂时不可用，请稍后重试"));
+                    emitter.complete();
                 } catch (Exception ignored) {
+                    emitter.completeWithError(e);
                 }
             }
         });
