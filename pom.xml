@@ -172,7 +172,6 @@
     <modules>
         <module>ai-gateway</module>
         <module>ai-modules</module>
-        <module>ai-api</module>
         <module>ai-common</module>
     </modules>
     <packaging>pom</packaging>

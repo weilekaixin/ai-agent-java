@@ -1,7 +1,7 @@
-package com.ai.agent;
+package com.ai.common.forest.agent;
 
-import com.ai.agent.model.ChatQuery;
-import com.ai.agent.model.ResumeQuery;
+import com.ai.common.forest.agent.model.MessageQuery;
+import com.ai.common.forest.agent.model.ResumeQuery;
 import com.dtflys.forest.annotation.BaseRequest;
 import com.dtflys.forest.annotation.ForestClient;
 import com.dtflys.forest.annotation.JSONBody;
@@ -27,7 +27,7 @@ public interface AgentClient {
      * @return SSE 流
      */
     @Post(value = "/api/chat", contentType = ContentType.APPLICATION_JSON)
-    ForestSSE chat(@JSONBody ChatQuery query);
+    ForestSSE chat(@JSONBody MessageQuery query);
 
     /**
      * 恢复执行敏感操作

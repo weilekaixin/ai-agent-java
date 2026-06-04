@@ -1,7 +1,7 @@
 package com.ai.modules.agent.controller;
 
-import com.ai.agent.model.ChatQuery;
-import com.ai.agent.model.ResumeQuery;
+import com.ai.common.forest.agent.model.MessageQuery;
+import com.ai.common.forest.agent.model.ResumeQuery;
 import com.ai.modules.agent.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -27,7 +27,7 @@ public class ChatController {
      * @author root 2026-05-16 16:04
      */
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter chat(@RequestBody ChatQuery query) {
+    public SseEmitter chat(@RequestBody MessageQuery query) {
         return chatService.chat(query);
     }
 

@@ -1,4 +1,4 @@
-package com.ai.agent.model;
+package com.ai.common.forest.agent.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

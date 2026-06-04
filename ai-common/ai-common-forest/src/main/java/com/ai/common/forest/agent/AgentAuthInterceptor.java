@@ -1,4 +1,4 @@
-package com.ai.agent;
+package com.ai.common.forest.agent;
 
 import com.dtflys.forest.exceptions.ForestRuntimeException;
 import com.dtflys.forest.http.ForestRequest;

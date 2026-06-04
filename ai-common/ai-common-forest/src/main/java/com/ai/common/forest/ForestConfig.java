@@ -1,4 +1,4 @@
-package com.ai.common.forest.config;
+package com.ai.common.forest;
 
 import com.dtflys.forest.springboot.annotation.ForestScan;
 import lombok.extern.slf4j.Slf4j;

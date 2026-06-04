@@ -2,9 +2,9 @@ package com.ai.modules.agent.service;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.ai.agent.AgentClient;
-import com.ai.agent.model.ChatQuery;
-import com.ai.agent.model.ResumeQuery;
+import com.ai.common.forest.agent.AgentClient;
+import com.ai.common.forest.agent.model.MessageQuery;
+import com.ai.common.forest.agent.model.ResumeQuery;
 import com.ai.modules.agent.config.AgentProperties;
 import com.ai.modules.agent.constant.AgentConstant;
 import com.ai.modules.agent.enums.StreamTag;
@@ -35,7 +35,7 @@ public class ChatService {
      *
      * @author root 2026-05-16 16:04
      */
-    public SseEmitter chat(ChatQuery query) {
+    public SseEmitter chat(MessageQuery query) {
         return this.stream(StreamTag.CHAT, () -> agentClient.chat(query));
     }
 

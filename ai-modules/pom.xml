@@ -10,6 +10,7 @@
 
     <modules>
         <module>ai-agent</module>
+        <module>ai-message</module>
     </modules>
 
     <artifactId>ai-modules</artifactId>

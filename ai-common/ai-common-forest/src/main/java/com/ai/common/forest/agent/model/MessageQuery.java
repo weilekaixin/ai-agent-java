@@ -1,4 +1,4 @@
-package com.ai.agent.model;
+package com.ai.common.forest.agent.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.Data;
  * @author root 2026-05-16 16:04
  */
 @Data
-public class ChatQuery {
+public class MessageQuery {
     /**
      * 会话ID
      */
