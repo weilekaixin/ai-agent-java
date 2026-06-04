@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ai.agent.AgentClient;
 import com.ai.agent.model.ChatQuery;
+import com.ai.agent.model.MultiAgentQuery;
 import com.ai.agent.model.ResumeQuery;
 import com.ai.modules.agent.config.AgentProperties;
 import com.ai.modules.agent.constant.AgentConstant;
@@ -32,7 +33,7 @@ public class ChatService {
 
     /**
      * 发起聊天
- */
+     */
     public SseEmitter chat(ChatQuery query) {
         return this.stream(StreamTag.CHAT, () -> agentClient.chat(query));
     }
@@ -42,6 +43,13 @@ public class ChatService {
      */
     public SseEmitter resume(ResumeQuery query) {
         return this.stream(StreamTag.RESUME, () -> agentClient.resume(query));
+    }
+
+    /**
+     * 多智能体协作对话
+     */
+    public SseEmitter multiAgentChat(MultiAgentQuery query) {
+        return this.stream(StreamTag.MULTI_AGENT, () -> agentClient.multiAgentChat(query));
     }
 
     /**
