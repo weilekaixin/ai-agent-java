@@ -12,6 +12,9 @@ agent:
     timeout: 300_000
 
 forest:
+  connect-timeout: 5000      # 5 s to establish TCP connection
+  read-timeout: 300000       # 5 min read timeout (matches SSE stream duration)
+  max-retry-count: 1         # retry once on transient network errors
   variables:
     # AGENT_BASE_URL 环境变量可覆盖，实现 dev/prod 切换
     agent_base_url: ${AGENT_BASE_URL:http://localhost:8000}
