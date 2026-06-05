@@ -8,7 +8,8 @@ import com.ai.common.core.exception.BusinessException;
 import com.ai.common.core.utils.ServletUtils;
 import com.ai.common.satoken.domain.SsoUser;
 import com.ai.common.satoken.utils.LoginHelper;
-import com.ai.modules.system.domain.entity.SysUser;
+import com.ai.modules.system.domain.entity.User;
+import com.ai.modules.system.domain.vo.LoginQuery;
 import com.ai.modules.system.mapper.SysUserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +31,13 @@ public class LoginService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 用户名密码登录，返回 token
+     * 用户名密码登录
      *
-     * @param username 用户名
-     * @param password 明文密码
+     * @author zhangyunlong 2026/6/5 00:00
      */
-    public String login(String username, String password) {
-        SysUser user = sysUserMapper.selectOne(
-                new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, username));
+    public String login(LoginQuery query) {
+        User user = sysUserMapper.selectOne(
+                new LambdaQueryWrapper<User>().eq(User::getUsername, username));
 
         if (ObjectUtil.isNull(user)) {
             throw new BusinessException("用户名或密码错误！");
@@ -56,7 +56,7 @@ public class LoginService {
         return StpUtil.getTokenValue();
     }
 
-    private SsoUser buildSsoUser(SysUser user) {
+    private SsoUser buildSsoUser(User user) {
         SsoUser ssoUser = new SsoUser();
         ssoUser.setUserId(user.getId());
         ssoUser.setUsername(user.getUsername());
@@ -65,8 +65,8 @@ public class LoginService {
         return ssoUser;
     }
 
-    private void recordLogin(SysUser user) {
-        SysUser update = new SysUser();
+    private void recordLogin(User user) {
+        User update = new User();
         update.setId(user.getId());
         update.setLoginIp(ServletUtils.getClientIP());
         update.setLoginDate(new Date());

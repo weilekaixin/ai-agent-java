@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS sys_user
 (
     id          BIGINT                   NOT NULL,
-    username    VARCHAR(64)              NOT NULL,
+    account    VARCHAR(64)              NOT NULL,
     nickname    VARCHAR(64),
     password    VARCHAR(255)             NOT NULL,
     phone       VARCHAR(20),
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS sys_user
     CONSTRAINT pk_sys_user PRIMARY KEY (id)
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS ux_sys_user_username
-    ON sys_user (username) WHERE del_flag = 0;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_sys_user_account
+    ON sys_user (account) WHERE del_flag = 0;
 
 COMMENT ON TABLE sys_user IS '系统用户';
 COMMENT ON COLUMN sys_user.status IS '0=正常 1=禁用';
@@ -106,7 +106,7 @@ COMMENT ON TABLE sys_role_permission IS '角色权限关联';
 -- ----------------------------
 -- 初始化超级管理员（密码: Admin@123，BCrypt 加密）
 -- ----------------------------
-INSERT INTO sys_user (id, username, nickname, password, user_type, status, create_time, update_time)
+INSERT INTO sys_user (id, account, nickname, password, user_type, status, create_time, update_time)
 VALUES (1761100000000000001,
         'admin',
         '超级管理员',
