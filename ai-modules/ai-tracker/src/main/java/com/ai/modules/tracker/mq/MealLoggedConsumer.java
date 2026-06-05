@@ -1,9 +1,9 @@
 package com.ai.modules.tracker.mq;
 
+import com.ai.modules.message.constant.NutritionMqConstant;
+import com.ai.modules.message.event.MealLoggedEvent;
 import com.ai.modules.tracker.domain.entity.DailyCalorieSummary;
 import com.ai.modules.tracker.mapper.DailyCalorieSummaryMapper;
-import com.ai.modules.tracker.constant.TrackerMqConstant;
-import com.ai.modules.tracker.mq.dto.MealLoggedEvent;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -21,9 +21,9 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @RocketMQMessageListener(
-        topic = TrackerMqConstant.TOPIC_NUTRITION_EVENT,
-        selectorExpression = TrackerMqConstant.TAG_MEAL_LOGGED,
-        consumerGroup = TrackerMqConstant.GROUP_TRACKER_AGGREGATOR
+        topic = NutritionMqConstant.TOPIC_NUTRITION_EVENT,
+        selectorExpression = NutritionMqConstant.TAG_MEAL_LOGGED,
+        consumerGroup = NutritionMqConstant.GROUP_TRACKER_AGGREGATOR
 )
 public class MealLoggedConsumer implements RocketMQListener<MealLoggedEvent> {
 

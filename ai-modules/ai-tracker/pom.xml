@@ -47,6 +47,10 @@
             <groupId>com.ai</groupId>
             <artifactId>ai-common-rocketmq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-message</artifactId>
+        </dependency>
 
         <!-- Sentinel 限流熔断 -->
         <dependency>

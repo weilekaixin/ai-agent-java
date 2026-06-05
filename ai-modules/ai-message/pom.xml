@@ -59,6 +59,10 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                        <!-- 让 fat jar 用 exec classifier，原始 jar 保留供其他模块依赖 -->
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
