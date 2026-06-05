@@ -20,7 +20,10 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     public static final String SEPARATOR = ",";
 
+
     public static final String SLASH = "/";
+
+    public static final String COLON = ":";
 
     @Deprecated
     private StringUtils() {

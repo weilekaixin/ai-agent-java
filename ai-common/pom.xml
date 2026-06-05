@@ -20,6 +20,7 @@
         <module>ai-common-dubbo</module>
         <module>ai-common-forest</module>
         <module>ai-common-rocketmq</module>
+        <module>ai-common-satoken</module>
     </modules>
 
     <artifactId>ai-common</artifactId>
