@@ -7,8 +7,11 @@ import com.ai.common.core.factory.YmlPropertySourceFactory;
 import com.ai.common.satoken.core.dao.PlusSaTokenDao;
 import com.ai.common.satoken.handler.SaTokenExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Sa-Token 配置
@@ -38,6 +41,15 @@ public class SaTokenConfiguration {
     @Bean
     public SaTokenExceptionHandler saTokenExceptionHandler() {
         return new SaTokenExceptionHandler();
+    }
+
+    /**
+     * BCrypt 密码编码器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

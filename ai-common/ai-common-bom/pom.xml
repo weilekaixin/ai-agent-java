@@ -82,6 +82,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- Sa-Token 权限认证 -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-satoken</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>
