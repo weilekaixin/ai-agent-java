@@ -1,55 +1,128 @@
 package com.ai.modules.nutrition.service;
 
-import com.ai.modules.nutrition.domain.entity.FoodCategory;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.ai.common.core.domain.R;
 import com.ai.common.redis.utils.RedisUtils;
+import com.ai.modules.nutrition.domain.entity.FoodCategory;
 import com.ai.modules.nutrition.mapper.FoodCategoryMapper;
+import com.ai.modules.nutrition.model.query.FoodCategoryListQuery;
+import com.ai.modules.nutrition.model.query.FoodCategoryQuery;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import lombok.RequiredArgsConstructor;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
 
 /**
- * 食物分类业务
+ * 食物分类
  *
  * @author zhangyunlong 2026/6/5 00:00
  */
+@Slf4j
 @Service
-@RequiredArgsConstructor
-public class FoodCategoryService {
+public class FoodCategoryService extends ServiceImpl<FoodCategoryMapper, FoodCategory> {
 
-    private static final String CACHE_KEY = "nutrition:category:list";
+    private static final String CACHE_KEY_LIST = "nutrition:category:list";
 
-    private final FoodCategoryMapper foodCategoryMapper;
+    /**
+     * 列表分页查询
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    public Page<FoodCategory> listPage(FoodCategoryListQuery query) {
+        var wrapper = this.buildWrapper(query).orderByAsc(FoodCategory::getSort);
+        return this.page(query.build(), wrapper);
+    }
 
-    /** 查全部分类（Redis 缓存 1 小时） */
+    /**
+     * 查询全部分类（Redis 缓存 1 小时，供前端下拉使用）
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
     public List<FoodCategory> listAll() {
-        List<FoodCategory> cached = RedisUtils.getCacheObject(CACHE_KEY);
-        if (cached != null) {
+        List<FoodCategory> cached = RedisUtils.getCacheObject(CACHE_KEY_LIST);
+        if (CollUtil.isNotEmpty(cached)) {
             return cached;
         }
-        List<FoodCategory> list = foodCategoryMapper.selectList(
-                new LambdaQueryWrapper<FoodCategory>().orderByAsc(FoodCategory::getSort));
-        RedisUtils.setCacheObject(CACHE_KEY, list, Duration.ofHours(1));
+        List<FoodCategory> list = this.list(Wrappers.lambdaQuery(FoodCategory.class).orderByAsc(FoodCategory::getSort));
+        RedisUtils.setCacheObject(CACHE_KEY_LIST, list, Duration.ofHours(1));
         return list;
     }
 
-    /** 新增分类，清除缓存 */
-    public void add(FoodCategory category) {
-        foodCategoryMapper.insert(category);
-        RedisUtils.deleteObject(CACHE_KEY);
+    /**
+     * 新增或更新
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public R<?> addOrUpdate(FoodCategoryQuery query) {
+        FoodCategory data;
+        if (ObjectUtil.isNotNull(query.getId())) {
+            data = baseMapper.selectById(query.getId());
+            if (ObjectUtil.isNull(data)) {
+                return R.fail("获取分类信息失败，请刷新后重试！");
+            }
+        } else {
+            data = new FoodCategory();
+        }
+        this.copyFields(data, query);
+        this.saveOrUpdate(data);
+        this.evictCache();
+        return R.ok();
     }
 
-    /** 修改分类，清除缓存 */
-    public void update(FoodCategory category) {
-        foodCategoryMapper.updateById(category);
-        RedisUtils.deleteObject(CACHE_KEY);
+    /**
+     * 批量删除
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public R<?> delBatch(List<Long> idList) {
+        if (CollUtil.isEmpty(idList)) {
+            return R.ok();
+        }
+        this.removeByIds(idList);
+        this.evictCache();
+        return R.ok();
     }
 
-    /** 删除分类，清除缓存 */
-    public void remove(Long id) {
-        foodCategoryMapper.deleteById(id);
-        RedisUtils.deleteObject(CACHE_KEY);
+    /**
+     * 构建查询条件
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    private LambdaQueryWrapper<FoodCategory> buildWrapper(FoodCategoryListQuery query) {
+        var wrapper = Wrappers.lambdaQuery(FoodCategory.class);
+        wrapper.like(StrUtil.isNotBlank(query.getName()), FoodCategory::getName, query.getName())
+                .in(CollUtil.isNotEmpty(query.getIdList()), FoodCategory::getId, query.getIdList());
+        return wrapper;
+    }
+
+    /**
+     * 复制字段
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    private void copyFields(FoodCategory entity, FoodCategoryQuery query) {
+        entity.setName(query.getName());
+        entity.setIcon(query.getIcon());
+        entity.setSort(query.getSort());
+    }
+
+    /**
+     * 清除分类缓存
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    private void evictCache() {
+        RedisUtils.deleteObject(CACHE_KEY_LIST);
     }
 }

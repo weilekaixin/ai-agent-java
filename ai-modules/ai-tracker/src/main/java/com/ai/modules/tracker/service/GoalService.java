@@ -1,58 +1,125 @@
 package com.ai.modules.tracker.service;
 
-import com.ai.common.core.exception.BusinessException;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.ai.common.core.domain.R;
 import com.ai.modules.tracker.domain.entity.Goal;
 import com.ai.modules.tracker.mapper.GoalMapper;
+import com.ai.modules.tracker.model.query.GoalListQuery;
+import com.ai.modules.tracker.model.query.GoalQuery;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import lombok.RequiredArgsConstructor;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
- * 目标业务
+ * 目标管理
  *
  * @author zhangyunlong 2026/6/5 00:00
  */
+@Slf4j
 @Service
-@RequiredArgsConstructor
-public class GoalService {
+public class GoalService extends ServiceImpl<GoalMapper, Goal> {
 
-    private final GoalMapper goalMapper;
-
-    public void create(Goal goal) {
-        goal.setStatus("in_progress");
-        goalMapper.insert(goal);
+    /**
+     * 列表分页查询
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    public Page<Goal> listPage(Long userId, GoalListQuery query) {
+        var wrapper = this.buildWrapper(userId, query).orderByDesc(Goal::getCreateTime);
+        return this.page(query.build(), wrapper);
     }
 
-    public List<Goal> listByUser(Long userId) {
-        return goalMapper.selectList(
-                new LambdaQueryWrapper<Goal>()
-                        .eq(Goal::getUserId, userId)
-                        .orderByDesc(Goal::getCreateTime));
-    }
-
-    /** 标记目标达成 */
-    public void achieve(Long id, Long userId) {
-        Goal goal = goalMapper.selectById(id);
-        if (goal == null || !goal.getUserId().equals(userId)) {
-            throw new BusinessException("目标不存在！");
+    /**
+     * 新增或更新
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public R<?> addOrUpdate(Long userId, GoalQuery query) {
+        Goal data;
+        if (ObjectUtil.isNotNull(query.getId())) {
+            data = baseMapper.selectById(query.getId());
+            if (ObjectUtil.isNull(data)) {
+                return R.fail("获取目标信息失败，请刷新后重试！");
+            }
+            if (!data.getUserId().equals(userId)) {
+                return R.fail("您没有权限操作该目标数据！");
+            }
+        } else {
+            data = new Goal();
+            data.setUserId(userId);
+            data.setStatus("in_progress");
         }
-        Goal update = new Goal();
-        update.setId(id);
-        update.setStatus("achieved");
-        goalMapper.updateById(update);
+        this.copyFields(data, query);
+        this.saveOrUpdate(data);
+        return R.ok();
     }
 
-    /** 放弃目标 */
-    public void abandon(Long id, Long userId) {
-        Goal goal = goalMapper.selectById(id);
-        if (goal == null || !goal.getUserId().equals(userId)) {
-            throw new BusinessException("目标不存在！");
+    /**
+     * 变更目标状态（达成/放弃）
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public R<?> changeStatus(Long id, Long userId, String status) {
+        Goal data = baseMapper.selectById(id);
+        if (ObjectUtil.isNull(data)) {
+            return R.fail("目标不存在或已被删除，请刷新后重试！");
         }
-        Goal update = new Goal();
-        update.setId(id);
-        update.setStatus("abandoned");
-        goalMapper.updateById(update);
+        if (!data.getUserId().equals(userId)) {
+            return R.fail("您没有权限操作该目标数据！");
+        }
+        data.setStatus(status);
+        baseMapper.updateById(data);
+        return R.ok();
+    }
+
+    /**
+     * 批量删除
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public R<?> delBatch(List<Long> idList) {
+        if (CollUtil.isEmpty(idList)) {
+            return R.ok();
+        }
+        this.removeByIds(idList);
+        return R.ok();
+    }
+
+    /**
+     * 构建查询条件
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    private LambdaQueryWrapper<Goal> buildWrapper(Long userId, GoalListQuery query) {
+        var wrapper = Wrappers.lambdaQuery(Goal.class);
+        wrapper.eq(Goal::getUserId, userId)
+                .eq(StrUtil.isNotBlank(query.getGoalType()), Goal::getGoalType, query.getGoalType())
+                .eq(StrUtil.isNotBlank(query.getStatus()), Goal::getStatus, query.getStatus())
+                .in(CollUtil.isNotEmpty(query.getIdList()), Goal::getId, query.getIdList());
+        return wrapper;
+    }
+
+    /**
+     * 复制字段
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    private void copyFields(Goal entity, GoalQuery query) {
+        entity.setGoalType(query.getGoalType());
+        entity.setTargetValue(query.getTargetValue());
+        entity.setCurrentValue(query.getCurrentValue());
+        entity.setDeadline(query.getDeadline());
+        entity.setRemark(query.getRemark());
     }
 }

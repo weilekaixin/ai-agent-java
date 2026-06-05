@@ -1,52 +1,92 @@
 package com.ai.modules.nutrition.controller;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import com.ai.common.core.domain.R;
-import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.nutrition.domain.entity.Food;
+import com.ai.modules.nutrition.model.query.FoodListQuery;
+import com.ai.modules.nutrition.model.query.FoodQuery;
 import com.ai.modules.nutrition.service.FoodService;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import lombok.RequiredArgsConstructor;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 食物库接口
+ * 食物库
+ * 控制层
  *
  * @author zhangyunlong 2026/6/5 00:00
+ * @folder 营养管理/食物库
  */
 @RestController
 @RequestMapping("/food")
-@RequiredArgsConstructor
 public class FoodController {
 
-    private final FoodService foodService;
+    private static final String MODEL_NAME = "食物";
 
-    @GetMapping("/page")
-    @SentinelResource("food:page")
-    public R<IPage<Food>> page(String name, Long categoryId, PageQuery pageQuery) {
-        return R.ok(foodService.page(name, categoryId, pageQuery));
+    @Resource
+    private FoodService foodService;
+
+    /**
+     * 列表查询
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @GetMapping("/list")
+    @SentinelResource("food:list")
+    public R<Page<Food>> list(@Valid FoodListQuery query) {
+        return R.ok(foodService.listPage(query));
     }
 
-    @GetMapping("/{id}")
-    public R<Food> getById(@PathVariable Long id) {
-        return R.ok(foodService.getById(id));
+    /**
+     * 详情
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @GetMapping("/get")
+    public R<Food> get(@Valid FoodListQuery query) {
+        if (ObjUtil.isNull(query.getId())) {
+            return R.fail("请选择" + MODEL_NAME + "数据！");
+        }
+        return R.ok(foodService.getById(query.getId()));
     }
 
-    @PostMapping
-    public R<Void> add(@RequestBody Food food) {
-        foodService.add(food);
-        return R.ok();
+    /**
+     * 新增
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @PostMapping("/add")
+    public R<?> add(@Valid @RequestBody FoodQuery query) {
+        return foodService.addOrUpdate(query);
     }
 
-    @PutMapping
-    public R<Void> update(@RequestBody Food food) {
-        foodService.update(food);
-        return R.ok();
+    /**
+     * 编辑
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @PostMapping("/update")
+    public R<?> update(@RequestBody FoodQuery query) {
+        if (ObjUtil.isNull(query.getId())) {
+            return R.fail("请选择" + MODEL_NAME + "数据！");
+        }
+        return foodService.addOrUpdate(query);
     }
 
-    @DeleteMapping("/{id}")
-    public R<Void> remove(@PathVariable Long id) {
-        foodService.remove(id);
-        return R.ok();
+    /**
+     * 批量删除
+     *
+     * @author zhangyunlong 2026/6/5 00:00
+     */
+    @PostMapping("/del_batch")
+    public R<?> delBatch(@RequestBody FoodListQuery query) {
+        if (CollUtil.isEmpty(query.getIdList())) {
+            return R.fail("请选择" + MODEL_NAME + "数据！");
+        }
+        query.setIdList(query.getIdList().stream().distinct().toList());
+        return foodService.delBatch(query.getIdList());
     }
 }
