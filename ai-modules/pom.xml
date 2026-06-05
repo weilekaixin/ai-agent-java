@@ -11,6 +11,7 @@
     <modules>
         <module>ai-agent</module>
         <module>ai-message</module>
+        <module>ai-system</module>
     </modules>
 
     <artifactId>ai-modules</artifactId>
