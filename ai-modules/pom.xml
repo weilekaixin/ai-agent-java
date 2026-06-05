@@ -14,6 +14,7 @@
         <module>ai-system</module>
         <module>ai-nutrition</module>
         <module>ai-tracker</module>
+        <module>ai-training</module>
     </modules>
 
     <artifactId>ai-modules</artifactId>
