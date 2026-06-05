@@ -75,6 +75,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- RocketMQ -->
+            <dependency>
+                <groupId>com.ai</groupId>
+                <artifactId>ai-common-rocketmq</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

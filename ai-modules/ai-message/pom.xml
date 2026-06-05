@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.ai</groupId>
         <artifactId>ai-modules</artifactId>
@@ -8,35 +10,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ai-agent</artifactId>
-
-    <description>
-        ai-agent AI Agent 服务
-    </description>
+    <artifactId>ai-message</artifactId>
+    <description>消息中心 — RocketMQ 业务消息</description>
 
     <dependencies>
-
-        <!-- SpringBoot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-
         <!-- Ai Common -->
-        <dependency>
-            <groupId>com.ai</groupId>
-            <artifactId>ai-common-nacos</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.ai</groupId>
             <artifactId>ai-common-core</artifactId>
@@ -45,19 +28,16 @@
             <groupId>com.ai</groupId>
             <artifactId>ai-common-web</artifactId>
         </dependency>
-        <!-- SpringBoot Actuator -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-rocketmq</artifactId>
         </dependency>
 
-        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -66,7 +46,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -77,5 +64,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
