@@ -4,7 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.util.ObjectUtil;
 import com.ai.common.core.enums.UserType;
-import com.ai.common.core.exception.ServiceException;
+import com.ai.common.core.exception.BusinessException;
 import com.ai.common.core.utils.ServletUtils;
 import com.ai.common.satoken.domain.SsoUser;
 import com.ai.common.satoken.utils.LoginHelper;
@@ -40,13 +40,13 @@ public class LoginService {
                 new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, username));
 
         if (ObjectUtil.isNull(user)) {
-            throw new ServiceException("用户名或密码错误！");
+            throw new BusinessException("用户名或密码错误！");
         }
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new ServiceException("用户名或密码错误！");
+            throw new BusinessException("用户名或密码错误！");
         }
         if (user.getStatus() != null && user.getStatus() == 1) {
-            throw new ServiceException("账号已被禁用！");
+            throw new BusinessException("账号已被禁用！");
         }
 
         recordLogin(user);
