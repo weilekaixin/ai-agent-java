@@ -107,12 +107,6 @@
                 <artifactId>forest-spring-boot3-starter</artifactId>
                 <version>${forest.version}</version>
             </dependency>
-            <!-- Ai Api Forest -->
-            <dependency>
-                <groupId>com.ai</groupId>
-                <artifactId>ai-api-forest</artifactId>
-                <version>${revision}</version>
-            </dependency>
             <!-- Sa-Token 权限认证 -->
             <dependency>
                 <groupId>cn.dev33</groupId>

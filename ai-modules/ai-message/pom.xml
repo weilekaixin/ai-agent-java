@@ -45,13 +45,6 @@
             <groupId>com.ai</groupId>
             <artifactId>ai-common-web</artifactId>
         </dependency>
-
-        <!-- Ai Api Forest（AgentClient） -->
-        <dependency>
-            <groupId>com.ai</groupId>
-            <artifactId>ai-api-forest</artifactId>
-        </dependency>
-
         <!-- SpringBoot Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
