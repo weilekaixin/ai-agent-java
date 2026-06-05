@@ -13,6 +13,7 @@
         <module>ai-message</module>
         <module>ai-system</module>
         <module>ai-nutrition</module>
+        <module>ai-tracker</module>
     </modules>
 
     <artifactId>ai-modules</artifactId>

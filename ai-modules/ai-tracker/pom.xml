@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.ai</groupId>
+        <artifactId>ai-modules</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ai-tracker</artifactId>
+    <description>指标追踪服务（体重、体脂、目标、卡路里聚合）</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Ai Common -->
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-nacos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-mybatis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-satoken</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
+            <artifactId>ai-common-rocketmq</artifactId>
+        </dependency>
+
+        <!-- Sentinel 限流熔断 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+
+        <!-- SpringBoot Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
