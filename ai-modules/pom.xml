@@ -12,6 +12,7 @@
         <module>ai-agent</module>
         <module>ai-message</module>
         <module>ai-system</module>
+        <module>ai-nutrition</module>
     </modules>
 
     <artifactId>ai-modules</artifactId>
