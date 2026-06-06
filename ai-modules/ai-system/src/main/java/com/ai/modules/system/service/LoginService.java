@@ -26,8 +26,7 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class LoginService {
-
-    private final SysUserMapper sysUserMapper;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -36,21 +35,17 @@ public class LoginService {
      * @author zhangyunlong 2026/6/5 00:00
      */
     public String login(LoginQuery query) {
-        User user = sysUserMapper.selectOne(
-                new LambdaQueryWrapper<User>().eq(User::getUsername, username));
-
+        var user = userService.getUserByAccount(query.getUsername());
         if (ObjectUtil.isNull(user)) {
             throw new BusinessException("用户名或密码错误！");
         }
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(query.getPassword(), user.getPassword())) {
             throw new BusinessException("用户名或密码错误！");
         }
         if (user.getStatus() != null && user.getStatus() == 1) {
             throw new BusinessException("账号已被禁用！");
         }
-
         recordLogin(user);
-
         SsoUser ssoUser = buildSsoUser(user);
         LoginHelper.login(ssoUser, new SaLoginParameter());
         return StpUtil.getTokenValue();
@@ -59,7 +54,7 @@ public class LoginService {
     private SsoUser buildSsoUser(User user) {
         SsoUser ssoUser = new SsoUser();
         ssoUser.setUserId(user.getId());
-        ssoUser.setUsername(user.getUsername());
+        ssoUser.setUsername(user.getAccount());
         ssoUser.setNickname(user.getNickname());
         ssoUser.setUserType(UserType.SYS_USER.getUserType());
         return ssoUser;
@@ -70,6 +65,6 @@ public class LoginService {
         update.setId(user.getId());
         update.setLoginIp(ServletUtils.getClientIP());
         update.setLoginDate(new Date());
-        sysUserMapper.updateById(update);
+        userService.updateById(update);
     }
 }
