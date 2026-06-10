@@ -1,5 +1,6 @@
 package com.ai.modules.system.domain.vo;
 
+import com.ai.common.core.enums.LoginSource;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -10,14 +11,17 @@ import lombok.Data;
  */
 @Data
 public class LoginQuery {
-    /**
-     * 用户名
-     */
+    /** 用户名 */
     @NotBlank(message = "用户名不能为空！")
     private String username;
-    /**
-     * 密码
-     */
+
+    /** 密码 */
     @NotBlank(message = "密码不能为空！")
     private String password;
+
+    /** 登录来源 */
+    private LoginSource source;
+
+    /** 设备识别码 */
+    private String deviceKey;
 }

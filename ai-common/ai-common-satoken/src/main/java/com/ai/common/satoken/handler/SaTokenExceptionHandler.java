@@ -29,4 +29,24 @@ public class SaTokenExceptionHandler {
         return R.fail(HttpStatus.HTTP_UNAUTHORIZED, "认证失败，无法访问系统资源");
     }
 
+    /**
+     * 权限不足
+     */
+    @ExceptionHandler(NotPermissionException.class)
+    public R<Void> handleNotPermissionException(NotPermissionException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',权限码'{}',权限不足", requestURI, e.getPermission());
+        return R.fail(HttpStatus.HTTP_FORBIDDEN, "没有访问权限，请联系管理员");
+    }
+
+    /**
+     * 角色不足
+     */
+    @ExceptionHandler(NotRoleException.class)
+    public R<Void> handleNotRoleException(NotRoleException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',角色码'{}',角色权限不足", requestURI, e.getRole());
+        return R.fail(HttpStatus.HTTP_FORBIDDEN, "没有访问权限，请联系管理员");
+    }
+
 }

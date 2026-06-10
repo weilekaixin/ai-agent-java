@@ -41,6 +41,11 @@ public class User extends BaseEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     /**
+     * 密码盐值
+     */
+    @JsonIgnore
+    private String salt;
+    /**
      * 手机号
      */
     private String phone;
@@ -57,9 +62,21 @@ public class User extends BaseEntity {
      */
     private String userType;
     /**
+     * 用户角色类型（1=超级管理员 2=子管理员 3=普通用户）
+     */
+    private Integer userRoleType;
+    /**
      * 状态（0=正常 1=禁用）
      */
     private Integer status;
+    /**
+     * 是否初始密码（0=否 1=是）
+     */
+    private Integer initPassword;
+    /**
+     * 密码最后修改时间
+     */
+    private Date pwdUpdateDate;
     /**
      * 最后登录IP
      */

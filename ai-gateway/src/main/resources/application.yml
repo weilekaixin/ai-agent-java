@@ -15,6 +15,7 @@ security:
   ignore:
     whites:
       - /api/chat/**
+      - /auth/**
 # 打印请求参数
 api-decrypt:
   enabled: true

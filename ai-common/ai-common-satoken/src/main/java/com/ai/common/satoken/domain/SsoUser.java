@@ -1,144 +1,50 @@
 package com.ai.common.satoken.domain;
 
-import com.ai.common.core.utils.StringUtils;
+import com.ai.common.core.enums.UserRoleType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * 用户信息
+ * 登录用户信息（主会话级别）
  *
- * @author ruoyi
+ * @author zhangyunlong
  */
 @Data
-@NoArgsConstructor
 public class SsoUser implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 用户ID
-     */
+    /** 用户ID */
     private Long userId;
 
-    /**
-     * 部门ID
-     */
-    private Long deptId;
+    /** 用户账号 */
+    private String account;
 
-    /**
-     * 部门类别编码
-     */
-    private String deptCategory;
-
-    /**
-     * 部门名
-     */
-    private String deptName;
-
-    /**
-     * 用户唯一标识
-     */
-    private String token;
-
-    /**
-     * 用户类型
-     */
-    private String userType;
-
-    /**
-     * 登录时间
-     */
-    private Long loginTime;
-
-    /**
-     * 过期时间
-     */
-    private Long expireTime;
-
-    /**
-     * 登录IP地址
-     */
-    private String ipaddr;
-
-    /**
-     * 登录地点
-     */
-    private String loginLocation;
-
-    /**
-     * 浏览器类型
-     */
-    private String browser;
-
-    /**
-     * 操作系统
-     */
-    private String os;
-
-    /**
-     * 菜单权限
-     */
-    private Set<String> menuPermission;
-
-    /**
-     * 角色权限
-     */
-    private Set<String> rolePermission;
-
-    /**
-     * 用户名
-     */
-    private String username;
-
-    /**
-     * 用户昵称
-     */
+    /** 用户昵称 */
     private String nickname;
 
-    /**
-     * 密码
-     */
-    private String password;
+    /** 手机号 */
+    private String phone;
 
-    /**
-     * 数据权限角色映射 key 为权限码 value 为可参与数据权限计算的角色ID列表
-     */
-    private Map<String, List<Long>> dataScopeRoleMap;
+    /** 用户类型 */
+    private String userType;
 
+    /** 用户角色类型 1-超级管理员，2-子管理员，3-普通用户 */
+    private Integer userRoleType;
 
-    /**
-     * 数据权限 当前角色ID
-     */
-    private Long roleId;
+    /** 是否初始密码 0-不是 1-是 */
+    private Integer initPassword;
 
-    /**
-     * 客户端
-     */
-    private String clientKey;
-
-    /**
-     * 设备类型
-     */
-    private String deviceType;
-
-    /**
-     * 获取登录id
-     */
-    public String getLoginId() {
-        if (userType == null) {
-            throw new IllegalArgumentException("用户类型不能为空");
-        }
-        if (userId == null) {
-            throw new IllegalArgumentException("用户ID不能为空");
-        }
-        return userType + StringUtils.COLON + userId;
+    /** 是否为超级管理员 */
+    public boolean isSuperAdmin() {
+        return UserRoleType.isSuperAdmin(userRoleType);
     }
 
+    /** 是否为管理员（含子管理员） */
+    public boolean isAdmin() {
+        return UserRoleType.isAdmin(userRoleType);
+    }
 }
