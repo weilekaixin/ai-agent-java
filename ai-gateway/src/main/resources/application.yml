@@ -15,7 +15,7 @@ security:
   ignore:
     whites:
       - /api/chat/**
-      - /auth/**
+      - /system/auth/**
 # 打印请求参数
 api-decrypt:
   enabled: true
@@ -43,6 +43,34 @@ spring:
                   args:
                     name: aiAgentCircuitBreaker
                     fallbackUri: forward:/fallback/ai-agent
+            # 用户中心服务
+            - id: ai-system
+              uri: lb://ai-system
+              predicates:
+                - Path=/system/**
+              filters:
+                - StripPrefix=1
+            # 营养饮食服务
+            - id: ai-nutrition
+              uri: lb://ai-nutrition
+              predicates:
+                - Path=/nutrition/**
+              filters:
+                - StripPrefix=1
+            # 指标追踪服务
+            - id: ai-tracker
+              uri: lb://ai-tracker
+              predicates:
+                - Path=/tracker/**
+              filters:
+                - StripPrefix=1
+            # 训练服务
+            - id: ai-training
+              uri: lb://ai-training
+              predicates:
+                - Path=/training/**
+              filters:
+                - StripPrefix=1
     # Nacos 权重感知负载均衡（多实例按权重分发）
     loadbalancer:
       nacos:
