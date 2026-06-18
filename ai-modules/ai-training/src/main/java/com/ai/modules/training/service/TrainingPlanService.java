@@ -82,7 +82,7 @@ public class TrainingPlanService extends ServiceImpl<TrainingPlanMapper, Trainin
         var wrapper = Wrappers.lambdaQuery(TrainingPlan.class);
         wrapper.eq(TrainingPlan::getUserId, userId)
                 .like(StrUtil.isNotBlank(query.getName()), TrainingPlan::getName, query.getName())
-                .eq(StrUtil.isNotBlank(query.getStatus()), TrainingPlan::getDifficulty, query.getStatus())
+                .eq(StrUtil.isNotBlank(query.getDifficulty()), TrainingPlan::getDifficulty, query.getDifficulty())
                 .in(CollUtil.isNotEmpty(query.getIdList()), TrainingPlan::getId, query.getIdList());
         return wrapper;
     }
@@ -94,7 +94,9 @@ public class TrainingPlanService extends ServiceImpl<TrainingPlanMapper, Trainin
      */
     private void copyFields(TrainingPlan entity, TrainingPlanQuery query) {
         entity.setName(query.getName());
-        entity.setRemark(query.getDescription());
-        entity.setDifficulty(query.getStatus());
+        entity.setTargetMuscles(query.getTargetMuscles());
+        entity.setEstimatedMin(query.getEstimatedMin());
+        entity.setDifficulty(query.getDifficulty());
+        entity.setRemark(query.getRemark());
     }
 }

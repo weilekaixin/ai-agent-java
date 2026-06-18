@@ -26,8 +26,8 @@ public class TrainingPlanListQuery extends PageQuery implements Serializable {
     /** 计划名称（模糊） */
     private String name;
 
-    /** 状态 */
-    private String status;
+    /** 难度：beginner/intermediate/advanced */
+    private String difficulty;
 
     private List<Long> idList;
 }

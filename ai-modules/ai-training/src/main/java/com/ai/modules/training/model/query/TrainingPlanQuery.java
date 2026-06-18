@@ -23,10 +23,14 @@ public class TrainingPlanQuery implements Serializable {
     @NotBlank(message = "计划名称不能为空！")
     private String name;
 
-    private String description;
+    /** 目标肌肉群（逗号分隔，如 chest,back） */
+    private String targetMuscles;
 
-    private Integer weeklyFrequency;
+    /** 预计时长（分钟） */
+    private Integer estimatedMin;
 
-    /** 状态：active / inactive */
-    private String status;
+    /** 难度：beginner/intermediate/advanced */
+    private String difficulty;
+
+    private String remark;
 }

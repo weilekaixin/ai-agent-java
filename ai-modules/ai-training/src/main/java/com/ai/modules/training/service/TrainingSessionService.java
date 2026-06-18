@@ -6,8 +6,10 @@ import com.ai.common.core.domain.R;
 import com.ai.common.rocketmq.support.RocketSender;
 import com.ai.modules.message.constant.TrainingMqConstant;
 import com.ai.modules.message.event.SessionCompletedEvent;
+import com.ai.modules.training.domain.entity.Exercise;
 import com.ai.modules.training.domain.entity.TrainingSet;
 import com.ai.modules.training.domain.entity.TrainingSession;
+import com.ai.modules.training.mapper.ExerciseMapper;
 import com.ai.modules.training.mapper.TrainingSessionMapper;
 import com.ai.modules.training.mapper.TrainingSetMapper;
 import com.ai.modules.training.model.query.TrainingSessionListQuery;
@@ -24,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 训练会话
@@ -34,8 +38,13 @@ import java.util.List;
 @Service
 public class TrainingSessionService extends ServiceImpl<TrainingSessionMapper, TrainingSession> {
 
+    /** 每组动作按 1.5 分钟估算（含组间休息），用于热量聚合 */
+    private static final BigDecimal SET_DURATION_MIN = BigDecimal.valueOf(1.5);
+
     @Resource
     private TrainingSetMapper trainingSetMapper;
+    @Resource
+    private ExerciseMapper exerciseMapper;
     @Resource
     private RocketSender rocketSender;
 
@@ -84,7 +93,6 @@ public class TrainingSessionService extends ServiceImpl<TrainingSessionMapper, T
         if (ObjectUtil.isNull(session) || "completed".equals(session.getStatus())) {
             return;
         }
-        // 聚合本次会话消耗热量（由动作 caloriesPerMin * 时长估算，这里简化聚合为 0，实际由 set 层传入）
         BigDecimal totalCalories = this.calcCalories(sessionId);
         Date endTime = new Date();
         int durationMin = 0;
@@ -148,7 +156,7 @@ public class TrainingSessionService extends ServiceImpl<TrainingSessionMapper, T
     }
 
     /**
-     * 聚合会话消耗热量（遍历已完成组，按动作 caloriesPerMin 估算）
+     * 聚合会话消耗热量：按已完成组数 × 动作每分钟消耗 × 单组估算时长 计算
      *
      * @author zhangyunlong 2026/6/5 00:00
      */
@@ -160,7 +168,17 @@ public class TrainingSessionService extends ServiceImpl<TrainingSessionMapper, T
         if (CollUtil.isEmpty(sets)) {
             return BigDecimal.ZERO;
         }
-        // 热量聚合逻辑由调用方扩展；此处返回0，后续可注入 ExerciseMapper 查询 caloriesPerMin
-        return BigDecimal.ZERO;
+        List<Long> exerciseIds = sets.stream().map(TrainingSet::getExerciseId).distinct().toList();
+        Map<Long, Exercise> exerciseMap = exerciseMapper.selectBatchIds(exerciseIds).stream()
+                .collect(Collectors.toMap(Exercise::getId, e -> e));
+        BigDecimal total = BigDecimal.ZERO;
+        for (TrainingSet set : sets) {
+            Exercise exercise = exerciseMap.get(set.getExerciseId());
+            if (ObjectUtil.isNull(exercise) || ObjectUtil.isNull(exercise.getCaloriesPerMin())) {
+                continue;
+            }
+            total = total.add(BigDecimal.valueOf(exercise.getCaloriesPerMin()).multiply(SET_DURATION_MIN));
+        }
+        return total;
     }
 }
