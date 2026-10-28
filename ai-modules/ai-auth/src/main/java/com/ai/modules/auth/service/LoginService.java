@@ -11,6 +11,7 @@ import com.ai.modules.auth.domain.vo.LoginVO;
 import com.ai.modules.auth.domain.vo.UserVO;
 import com.ai.modules.auth.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +68,16 @@ public class LoginService {
     public void logout() {
         StpUtil.checkLogin();
         StpUtil.logout();
+    }
+
+    /**
+     * 校验当前用户已修改初始密码
+     */
+    public void checkPasswordChanged() {
+        var user = this.getUserInfo();
+        if (Boolean.TRUE.equals(user.getMustChangePassword())) {
+            throw new BusinessException("请先修改初始密码", HttpStatus.FORBIDDEN.value());
+        }
     }
 
     /**
