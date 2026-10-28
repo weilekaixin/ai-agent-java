@@ -1,6 +1,9 @@
 server:
   port: ${AUTH_PORT:8090}
 
+mybatis-plus:
+  mapperPackage: com.ai.modules.auth.mapper
+
 spring:
   application:
     name: ai-auth
