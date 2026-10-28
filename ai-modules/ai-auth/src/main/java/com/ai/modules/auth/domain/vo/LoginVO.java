@@ -19,4 +19,8 @@ public class LoginVO {
      */
     @ToString.Exclude
     private String tokenValue;
+    /**
+     * 是否必须修改初始密码
+     */
+    private Boolean mustChangePassword;
 }

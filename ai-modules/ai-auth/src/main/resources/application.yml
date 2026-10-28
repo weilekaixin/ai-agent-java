@@ -4,6 +4,12 @@ server:
 mybatis-plus:
   mapperPackage: com.ai.modules.auth.mapper
 
+sa-token:
+  # 会话有效期，单位秒，默认 7 天
+  timeout: ${AUTH_TOKEN_TIMEOUT:604800}
+  is-concurrent: true
+  is-share: false
+
 spring:
   application:
     name: ai-auth
