@@ -8,6 +8,7 @@ import com.ai.modules.auth.constant.PasswordConstants;
 import com.ai.modules.auth.domain.dto.ChangePasswordDTO;
 import com.ai.modules.auth.domain.dto.LoginDTO;
 import com.ai.modules.auth.domain.vo.LoginVO;
+import com.ai.modules.auth.domain.vo.UserVO;
 import com.ai.modules.auth.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,6 +42,31 @@ public class LoginService {
         vo.setTokenValue(StpUtil.getTokenValue());
         vo.setMustChangePassword(user.getMustChangePassword());
         return vo;
+    }
+
+    /**
+     * 查询当前登录用户，不返回密码和内部字段
+     */
+    public UserVO getUserInfo() {
+        long userId = StpUtil.getLoginIdAsLong();
+        var user = userMapper.selectById(userId);
+        if (ObjUtil.isNull(user) || !Boolean.TRUE.equals(user.getEnabled())) {
+            throw new BusinessException("账号不存在或已禁用");
+        }
+        UserVO vo = new UserVO();
+        vo.setUserId(user.getUserId());
+        vo.setUsername(user.getUsername());
+        vo.setRole(user.getRole());
+        vo.setMustChangePassword(user.getMustChangePassword());
+        return vo;
+    }
+
+    /**
+     * 退出当前设备，不影响其他设备
+     */
+    public void logout() {
+        StpUtil.checkLogin();
+        StpUtil.logout();
     }
 
     /**

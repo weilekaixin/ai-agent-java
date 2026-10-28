@@ -4,9 +4,11 @@ import com.ai.common.core.domain.R;
 import com.ai.modules.auth.domain.dto.ChangePasswordDTO;
 import com.ai.modules.auth.domain.dto.LoginDTO;
 import com.ai.modules.auth.domain.vo.LoginVO;
+import com.ai.modules.auth.domain.vo.UserVO;
 import com.ai.modules.auth.service.LoginService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,23 @@ public class LoginController {
     @PostMapping("/login")
     public R<LoginVO> login(@Valid @RequestBody LoginDTO query) {
         return R.ok(loginService.login(query));
+    }
+
+    /**
+     * 查询当前登录用户
+     */
+    @GetMapping("/me")
+    public R<UserVO> getUserInfo() {
+        return R.ok(loginService.getUserInfo());
+    }
+
+    /**
+     * 退出当前设备
+     */
+    @PostMapping("/logout")
+    public R<Void> logout() {
+        loginService.logout();
+        return R.ok();
     }
 
     /**
