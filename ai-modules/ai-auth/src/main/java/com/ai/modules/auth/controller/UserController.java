@@ -2,12 +2,16 @@ package com.ai.modules.auth.controller;
 
 import com.ai.common.core.domain.R;
 import com.ai.common.mybatis.core.page.PageQuery;
+import com.ai.modules.auth.domain.query.UserQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
 import com.ai.modules.auth.service.LoginService;
 import com.ai.modules.auth.service.UserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,5 +34,14 @@ public class UserController {
     public R<IPage<UserVO>> listPage(PageQuery query) {
         loginService.checkAdmin();
         return R.ok(userService.listPage(query));
+    }
+
+    /**
+     * 管理员新增普通用户
+     */
+    @PostMapping
+    public R<UserVO> create(@Valid @RequestBody UserQuery query) {
+        loginService.checkAdmin();
+        return R.ok(userService.create(query));
     }
 }
