@@ -26,6 +26,11 @@ public class UserVO {
     private Permission role;
 
     /**
+     * 是否启用
+     */
+    private Boolean enabled;
+
+    /**
      * 是否必须修改初始密码
      */
     private Boolean mustChangePassword;

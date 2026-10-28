@@ -9,6 +9,7 @@ import com.ai.modules.auth.domain.dto.ChangePasswordDTO;
 import com.ai.modules.auth.domain.dto.LoginDTO;
 import com.ai.modules.auth.domain.vo.LoginVO;
 import com.ai.modules.auth.domain.vo.UserVO;
+import com.ai.modules.auth.enums.Permission;
 import com.ai.modules.auth.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,7 @@ public class LoginService {
         vo.setUserId(user.getUserId());
         vo.setUsername(user.getUsername());
         vo.setRole(user.getRole());
+        vo.setEnabled(user.getEnabled());
         vo.setMustChangePassword(user.getMustChangePassword());
         return vo;
     }
@@ -77,6 +79,16 @@ public class LoginService {
         var user = this.getUserInfo();
         if (Boolean.TRUE.equals(user.getMustChangePassword())) {
             throw new BusinessException("请先修改初始密码", HttpStatus.FORBIDDEN.value());
+        }
+    }
+
+    /**
+     * 校验当前用户的管理员权限
+     */
+    public void checkAdmin() {
+        var user = this.getUserInfo();
+        if (user.getRole() != Permission.ADMIN) {
+            throw new BusinessException("需要管理员权限", HttpStatus.FORBIDDEN.value());
         }
     }
 
