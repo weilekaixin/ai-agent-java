@@ -5,12 +5,21 @@ mybatis-plus:
   mapperPackage: com.ai.modules.auth.mapper
 
 sa-token:
+  token-name: ${AUTH_TOKEN_NAME:satoken}
   # 会话有效期，单位秒，默认 7 天
   timeout: ${AUTH_TOKEN_TIMEOUT:604800}
   is-concurrent: true
   is-share: false
 
 spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      password: ${REDIS_PASSWORD:}
+      timeout: ${REDIS_TIMEOUT:3s}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:3s}
   application:
     name: ai-auth
   profiles:

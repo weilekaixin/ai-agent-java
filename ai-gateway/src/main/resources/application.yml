@@ -4,10 +4,21 @@ server:
     context-path: /
 
 spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      password: ${REDIS_PASSWORD:}
+      timeout: ${REDIS_TIMEOUT:3s}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:3s}
   application:
     name: ai-gateway
   profiles:
     active: ${profiles.active:dev}
+
+sa-token:
+  token-name: ${AUTH_TOKEN_NAME:satoken}
 
 # 安全配置
 security:

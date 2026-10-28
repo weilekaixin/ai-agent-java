@@ -1,11 +1,12 @@
 package com.ai.common.redis.config;
 
+import cn.dev33.satoken.dao.SaTokenDao;
+import cn.dev33.satoken.dao.SaTokenDaoForRedisson;
 import com.ai.common.redis.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Redis 配置
@@ -15,6 +16,14 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @AutoConfiguration
 public class RedisConfiguration {
+
+    /**
+     * 使用 Redis 共享 Sa-Token 登录会话
+     */
+    @Bean
+    public SaTokenDao saTokenDao(RedissonClient redissonClient) {
+        return new SaTokenDaoForRedisson(redissonClient);
+    }
 
     @Bean
     public RedisUtils redisUtils(RedissonClient redissonClient) {
