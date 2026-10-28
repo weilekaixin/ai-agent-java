@@ -17,7 +17,6 @@ spring:
       host: ${REDIS_HOST:127.0.0.1}
       port: ${REDIS_PORT:6379}
       database: ${REDIS_DATABASE:0}
-      password: ${REDIS_PASSWORD:}
       timeout: ${REDIS_TIMEOUT:3s}
       connect-timeout: ${REDIS_CONNECT_TIMEOUT:3s}
   application:
