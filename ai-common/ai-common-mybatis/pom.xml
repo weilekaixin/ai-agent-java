@@ -42,10 +42,10 @@
             <artifactId>p6spy</artifactId>
         </dependency>
 
-        <!-- PostgreSql -->
+        <!-- MySQL -->
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
 
     </dependencies>
