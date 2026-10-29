@@ -3,6 +3,7 @@ package com.ai.modules.auth.controller;
 import com.ai.common.core.domain.R;
 import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.auth.domain.query.UserQuery;
+import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
 import com.ai.modules.auth.service.LoginService;
 import com.ai.modules.auth.service.UserService;
@@ -10,7 +11,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,5 +46,15 @@ public class UserController {
     public R<UserVO> create(@Valid @RequestBody UserQuery query) {
         loginService.checkAdmin();
         return R.ok(userService.create(query));
+    }
+
+    /**
+     * 管理员启用或禁用用户
+     */
+    @PutMapping("/{userId}/status")
+    public R<Void> updateStatus(@PathVariable Long userId, @Valid @RequestBody UserStatusQuery query) {
+        loginService.checkAdmin();
+        userService.updateStatus(userId, query);
+        return R.ok();
     }
 }

@@ -1,12 +1,14 @@
 package com.ai.modules.auth.service;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ai.common.core.exception.BusinessException;
 import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.auth.constant.PasswordConstants;
 import com.ai.modules.auth.domain.User;
 import com.ai.modules.auth.domain.query.UserQuery;
+import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
 import com.ai.modules.auth.enums.Permission;
 import com.ai.modules.auth.mapper.UserMapper;
@@ -77,6 +79,30 @@ public class UserService {
             throw new BusinessException("用户名已存在", HttpStatus.CONFLICT.value());
         }
         return this.toUserVO(user);
+    }
+
+    /**
+     * 修改用户启用状态，禁用后退出该用户的所有设备
+     */
+    public void updateStatus(Long userId, UserStatusQuery query) {
+        var user = userMapper.selectById(userId);
+        if (ObjUtil.isNull(user)) {
+            throw new BusinessException("用户不存在", HttpStatus.NOT_FOUND.value());
+        }
+        if (Boolean.FALSE.equals(query.getEnabled()) && user.getRole() == Permission.ADMIN) {
+            throw new BusinessException("不允许禁用管理员", HttpStatus.FORBIDDEN.value());
+        }
+        User update = new User();
+        update.setUserId(userId);
+        update.setEnabled(query.getEnabled());
+        update.setUpdateBy(StpUtil.getLoginIdAsLong());
+        if (userMapper.updateById(update) == 0) {
+            throw new BusinessException("用户状态更新失败，请刷新后重试", HttpStatus.CONFLICT.value());
+        }
+        // 数据库更新已提交；禁用时同时撤销 Redis 中的全部会话。
+        if (Boolean.FALSE.equals(query.getEnabled())) {
+            StpUtil.logout(userId);
+        }
     }
 
     private UserVO toUserVO(User user) {
