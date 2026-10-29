@@ -1,9 +1,9 @@
 package com.ai.modules.auth.controller;
 
 import com.ai.common.core.domain.R;
-import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.auth.domain.query.ResetPasswordQuery;
 import com.ai.modules.auth.domain.query.UpdateUsernameQuery;
+import com.ai.modules.auth.domain.query.UserListQuery;
 import com.ai.modules.auth.domain.query.UserQuery;
 import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
@@ -36,7 +36,7 @@ public class UserController {
      * 管理员分页查询用户
      */
     @GetMapping("/list")
-    public R<IPage<UserVO>> listPage(PageQuery query) {
+    public R<IPage<UserVO>> listPage(@Valid UserListQuery query) {
         loginService.checkAdmin();
         return R.ok(userService.listPage(query));
     }

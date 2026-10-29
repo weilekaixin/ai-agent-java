@@ -4,16 +4,17 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ai.common.core.exception.BusinessException;
-import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.auth.constant.PasswordConstants;
 import com.ai.modules.auth.domain.User;
 import com.ai.modules.auth.domain.query.ResetPasswordQuery;
 import com.ai.modules.auth.domain.query.UpdateUsernameQuery;
+import com.ai.modules.auth.domain.query.UserListQuery;
 import com.ai.modules.auth.domain.query.UserQuery;
 import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
 import com.ai.modules.auth.enums.Permission;
 import com.ai.modules.auth.mapper.UserMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
@@ -38,13 +39,8 @@ public class UserService {
     /**
      * 分页查询用户，仅返回允许展示的字段
      */
-    public IPage<UserVO> listPage(PageQuery query) {
-        var wrapper = Wrappers.lambdaQuery(User.class)
-                .select(User::getUserId, User::getUsername, User::getRole,
-                        User::getEnabled, User::getMustChangePassword)
-                .orderByDesc(User::getCreateTime)
-                .orderByDesc(User::getUserId);
-        var page = userMapper.selectPage(query.build(), wrapper);
+    public IPage<UserVO> listPage(UserListQuery query) {
+        var page = userMapper.selectPage(query.build(), this.buildWrapper(query));
         return page.convert(this::toUserVO);
     }
 
@@ -176,6 +172,21 @@ public class UserService {
             // 并发修改仍由数据库唯一约束兜底。
             throw new BusinessException("用户名已存在", HttpStatus.CONFLICT.value());
         }
+    }
+
+    /**
+     * 构建用户列表查询条件
+     */
+    private LambdaQueryWrapper<User> buildWrapper(UserListQuery query) {
+        String username = StrUtil.trim(query.getUsername());
+        return Wrappers.lambdaQuery(User.class)
+                .select(User::getUserId, User::getUsername, User::getRole,
+                        User::getEnabled, User::getMustChangePassword)
+                .like(StrUtil.isNotBlank(username), User::getUsername, username)
+                .eq(ObjUtil.isNotNull(query.getRole()), User::getRole, query.getRole())
+                .eq(ObjUtil.isNotNull(query.getEnabled()), User::getEnabled, query.getEnabled())
+                .orderByDesc(User::getCreateTime)
+                .orderByDesc(User::getUserId);
     }
 
     private UserVO toUserVO(User user) {
