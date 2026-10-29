@@ -2,6 +2,7 @@ package com.ai.modules.auth.controller;
 
 import com.ai.common.core.domain.R;
 import com.ai.common.mybatis.core.page.PageQuery;
+import com.ai.modules.auth.domain.query.ResetPasswordQuery;
 import com.ai.modules.auth.domain.query.UserQuery;
 import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
@@ -55,6 +56,16 @@ public class UserController {
     public R<Void> updateStatus(@PathVariable Long userId, @Valid @RequestBody UserStatusQuery query) {
         loginService.checkAdmin();
         userService.updateStatus(userId, query);
+        return R.ok();
+    }
+
+    /**
+     * 管理员重置用户密码
+     */
+    @PutMapping("/{userId}/password")
+    public R<Void> resetPassword(@PathVariable Long userId, @Valid @RequestBody ResetPasswordQuery query) {
+        loginService.checkAdmin();
+        userService.resetPassword(userId, query);
         return R.ok();
     }
 }

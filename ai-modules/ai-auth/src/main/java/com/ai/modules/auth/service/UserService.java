@@ -7,6 +7,7 @@ import com.ai.common.core.exception.BusinessException;
 import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.auth.constant.PasswordConstants;
 import com.ai.modules.auth.domain.User;
+import com.ai.modules.auth.domain.query.ResetPasswordQuery;
 import com.ai.modules.auth.domain.query.UserQuery;
 import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
@@ -103,6 +104,31 @@ public class UserService {
         if (Boolean.FALSE.equals(query.getEnabled())) {
             StpUtil.logout(userId);
         }
+    }
+
+    /**
+     * 重置初始密码并退出所有设备，用户下次登录必须修改密码
+     */
+    public void resetPassword(Long userId, ResetPasswordQuery query) {
+        String password = query.getPassword();
+        if (StrUtil.isBlank(password) || password.length() < PasswordConstants.MIN_LENGTH
+                || password.getBytes(StandardCharsets.UTF_8).length > PasswordConstants.MAX_BYTES) {
+            throw new BusinessException(String.format("初始密码至少 %d 个字符，UTF-8 长度不超过 %d 字节",
+                    PasswordConstants.MIN_LENGTH, PasswordConstants.MAX_BYTES), HttpStatus.BAD_REQUEST.value());
+        }
+        if (ObjUtil.isNull(userMapper.selectById(userId))) {
+            throw new BusinessException("用户不存在", HttpStatus.NOT_FOUND.value());
+        }
+        User update = new User();
+        update.setUserId(userId);
+        update.setPassword(passwordEncoder.encode(password));
+        update.setMustChangePassword(true);
+        update.setUpdateBy(StpUtil.getLoginIdAsLong());
+        if (userMapper.updateById(update) == 0) {
+            throw new BusinessException("密码重置失败，请刷新后重试", HttpStatus.CONFLICT.value());
+        }
+        // 单条更新已提交，再撤销全部会话，避免数据库回滚后旧密码仍可使用。
+        StpUtil.logout(userId);
     }
 
     private UserVO toUserVO(User user) {
