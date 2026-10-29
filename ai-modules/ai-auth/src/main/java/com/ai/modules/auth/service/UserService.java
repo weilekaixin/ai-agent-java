@@ -8,6 +8,7 @@ import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.auth.constant.PasswordConstants;
 import com.ai.modules.auth.domain.User;
 import com.ai.modules.auth.domain.query.ResetPasswordQuery;
+import com.ai.modules.auth.domain.query.UpdateUsernameQuery;
 import com.ai.modules.auth.domain.query.UserQuery;
 import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
@@ -129,6 +130,37 @@ public class UserService {
         }
         // 单条更新已提交，再撤销全部会话，避免数据库回滚后旧密码仍可使用。
         StpUtil.logout(userId);
+    }
+
+    /**
+     * 修改用户名，保留用户标识及现有会话
+     */
+    public void updateUsername(Long userId, UpdateUsernameQuery query) {
+        String username = StrUtil.trim(query.getUsername());
+        if (StrUtil.isBlank(username) || username.length() > UserQuery.USERNAME_MAX_LENGTH) {
+            throw new BusinessException("用户名不能为空或超出长度限制", HttpStatus.BAD_REQUEST.value());
+        }
+        if (ObjUtil.isNull(userMapper.selectById(userId))) {
+            throw new BusinessException("用户不存在", HttpStatus.NOT_FOUND.value());
+        }
+        var wrapper = Wrappers.lambdaQuery(User.class)
+                .eq(User::getUsername, username)
+                .ne(User::getUserId, userId);
+        if (userMapper.exists(wrapper)) {
+            throw new BusinessException("用户名已存在", HttpStatus.CONFLICT.value());
+        }
+        User update = new User();
+        update.setUserId(userId);
+        update.setUsername(username);
+        update.setUpdateBy(StpUtil.getLoginIdAsLong());
+        try {
+            if (userMapper.updateById(update) == 0) {
+                throw new BusinessException("用户名更新失败，请刷新后重试", HttpStatus.CONFLICT.value());
+            }
+        } catch (DuplicateKeyException exception) {
+            // 并发修改仍由数据库唯一约束兜底。
+            throw new BusinessException("用户名已存在", HttpStatus.CONFLICT.value());
+        }
     }
 
     private UserVO toUserVO(User user) {

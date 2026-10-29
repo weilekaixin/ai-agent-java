@@ -3,6 +3,7 @@ package com.ai.modules.auth.controller;
 import com.ai.common.core.domain.R;
 import com.ai.common.mybatis.core.page.PageQuery;
 import com.ai.modules.auth.domain.query.ResetPasswordQuery;
+import com.ai.modules.auth.domain.query.UpdateUsernameQuery;
 import com.ai.modules.auth.domain.query.UserQuery;
 import com.ai.modules.auth.domain.query.UserStatusQuery;
 import com.ai.modules.auth.domain.vo.UserVO;
@@ -66,6 +67,16 @@ public class UserController {
     public R<Void> resetPassword(@PathVariable Long userId, @Valid @RequestBody ResetPasswordQuery query) {
         loginService.checkAdmin();
         userService.resetPassword(userId, query);
+        return R.ok();
+    }
+
+    /**
+     * 管理员修改用户名
+     */
+    @PutMapping("/{userId}/username")
+    public R<Void> updateUsername(@PathVariable Long userId, @Valid @RequestBody UpdateUsernameQuery query) {
+        loginService.checkAdmin();
+        userService.updateUsername(userId, query);
         return R.ok();
     }
 }
