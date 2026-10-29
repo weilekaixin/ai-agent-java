@@ -10,6 +10,7 @@
 
     <modules>
         <module>ai-auth</module>
+        <module>ai-accounting</module>
         <module>ai-agent</module>
     </modules>
 
