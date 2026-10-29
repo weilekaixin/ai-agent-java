@@ -42,6 +42,15 @@ public class UserController {
     }
 
     /**
+     * 管理员查询用户详情
+     */
+    @GetMapping("/{userId}")
+    public R<UserVO> getInfo(@PathVariable Long userId) {
+        loginService.checkAdmin();
+        return R.ok(userService.getInfo(userId));
+    }
+
+    /**
      * 管理员新增普通用户
      */
     @PostMapping

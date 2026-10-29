@@ -49,6 +49,21 @@ public class UserService {
     }
 
     /**
+     * 查询用户详情，仅加载允许展示的字段
+     */
+    public UserVO getInfo(Long userId) {
+        var wrapper = Wrappers.lambdaQuery(User.class)
+                .select(User::getUserId, User::getUsername, User::getRole,
+                        User::getEnabled, User::getMustChangePassword)
+                .eq(User::getUserId, userId);
+        var user = userMapper.selectOne(wrapper);
+        if (ObjUtil.isNull(user)) {
+            throw new BusinessException("用户不存在", HttpStatus.NOT_FOUND.value());
+        }
+        return this.toUserVO(user);
+    }
+
+    /**
      * 创建普通用户，初始密码只保存 BCrypt 摘要
      */
     public UserVO create(UserQuery query) {
