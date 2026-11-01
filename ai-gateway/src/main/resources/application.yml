@@ -41,6 +41,13 @@ spring:
               lowerCaseServiceId: true
               enabled: true
           routes:
+            # 记账服务
+            - id: ai-accounting
+              uri: lb://ai-accounting
+              predicates:
+                - Path=/api/accounting/**
+              filters:
+                - StripPrefix=1
             # AI Agent 服务（多实例：8081/8082/8083 → 各自 Nacos 注册 → 网关权重轮询）
             - id: ai-agent
               uri: lb://ai-agent

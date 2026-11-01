@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ai.common.core.exception.BusinessException;
+import com.ai.common.redis.constant.LoginConstants;
 import com.ai.modules.auth.constant.PasswordConstants;
 import com.ai.modules.auth.domain.dto.ChangePasswordDTO;
 import com.ai.modules.auth.domain.dto.LoginDTO;
@@ -39,6 +40,8 @@ public class LoginService {
             throw new BusinessException("用户名或密码错误");
         }
         StpUtil.login(user.getUserId());
+        StpUtil.getTokenSession().set(LoginConstants.PASSWORD_CHANGED,
+                Boolean.FALSE.equals(user.getMustChangePassword()));
         LoginVO vo = new LoginVO();
         vo.setTokenName(StpUtil.getTokenName());
         vo.setTokenValue(StpUtil.getTokenValue());

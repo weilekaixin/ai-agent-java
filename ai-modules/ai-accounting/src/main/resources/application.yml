@@ -4,7 +4,17 @@ server:
 mybatis-plus:
   mapperPackage: com.ai.modules.accounting.mapper
 
+sa-token:
+  token-name: ${AUTH_TOKEN_NAME:satoken}
+
 spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      timeout: ${REDIS_TIMEOUT:3s}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:3s}
   application:
     name: ai-accounting
   profiles:
