@@ -17,6 +17,10 @@
     <dependencies>
         <dependency>
             <groupId>com.ai</groupId>
+            <artifactId>ai-common-mybatis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ai</groupId>
             <artifactId>ai-common-nacos</artifactId>
         </dependency>
         <dependency>

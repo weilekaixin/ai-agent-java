@@ -1,6 +1,9 @@
 server:
   port: ${ACCOUNTING_PORT:8091}
 
+mybatis-plus:
+  mapperPackage: com.ai.modules.accounting.mapper
+
 spring:
   application:
     name: ai-accounting
