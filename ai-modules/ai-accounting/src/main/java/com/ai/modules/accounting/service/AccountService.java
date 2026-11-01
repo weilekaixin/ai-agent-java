@@ -5,10 +5,13 @@ import com.ai.common.core.exception.BusinessException;
 import com.ai.modules.accounting.domain.Account;
 import com.ai.modules.accounting.domain.AccountFlow;
 import com.ai.modules.accounting.domain.query.AccountQuery;
+import com.ai.modules.accounting.domain.vo.AccountSummaryVO;
 import com.ai.modules.accounting.domain.vo.AccountVO;
 import com.ai.modules.accounting.enums.AccountChangeType;
 import com.ai.modules.accounting.mapper.AccountFlowMapper;
 import com.ai.modules.accounting.mapper.AccountMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
@@ -31,6 +35,30 @@ import java.util.Date;
 public class AccountService {
     private final AccountMapper accountMapper;
     private final AccountFlowMapper accountFlowMapper;
+
+    /**
+     * 查询本人账户及总余额，一次查询保证列表与汇总使用同一份数据
+     */
+    public AccountSummaryVO getSummary(@NotNull @Positive Long userId) {
+        var accounts = accountMapper.selectList(this.buildWrapper(userId));
+        AccountSummaryVO vo = new AccountSummaryVO();
+        vo.setAccounts(accounts.stream().map(this::toAccountVO).toList());
+        vo.setTotalBalance(accounts.stream().map(Account::getBalance)
+                .reduce(BigDecimal.ZERO.setScale(AccountQuery.AMOUNT_SCALE), BigDecimal::add));
+        return vo;
+    }
+
+    /**
+     * 构建本人账户查询条件，隐藏账户仍参与余额汇总
+     */
+    private LambdaQueryWrapper<Account> buildWrapper(Long userId) {
+        return Wrappers.lambdaQuery(Account.class)
+                .select(Account::getAccountId, Account::getName, Account::getBalance,
+                        Account::getSortOrder, Account::getHidden)
+                .eq(Account::getUserId, userId)
+                .orderByAsc(Account::getSortOrder)
+                .orderByAsc(Account::getAccountId);
+    }
 
     /**
      * 创建账户及初始流水，userId 必须由调用方从登录上下文取得
